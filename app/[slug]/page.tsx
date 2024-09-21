@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block, User, Website } from '@/types'
-import { Plus, Settings, Users } from 'lucide-react'
+import { Plus, Users } from 'lucide-react'
 import {
   getUserById,
   getWebsiteByPath,
@@ -94,16 +94,18 @@ export default function CVBuilderPage({
                 </AvatarFallback>
               </Avatar>
               <EditableField
+                type='text'
                 value={website.title || ''}
                 onSave={(newValue) => handleSave('title', newValue)}
                 isEditable={isOwnProfile}
                 className='text-5xl font-bold '
               />
               <EditableField
+                type='textarea'
                 value={website.description || ''}
                 onSave={(newValue) => handleSave('description', newValue)}
                 isEditable={isOwnProfile}
-                className='text-xl text-gray-600'
+                className='text-xl text-gray-600 w-full'
               />
 
               {/* Button section */}

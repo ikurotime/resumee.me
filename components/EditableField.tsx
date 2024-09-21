@@ -4,12 +4,14 @@ export function EditableField({
   value,
   onSave,
   isEditable,
-  className
+  className,
+  type
 }: {
   value: string
   onSave: (value: string) => void
   isEditable: boolean
   className: string
+  type: 'text' | 'textarea'
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedValue, setEditedValue] = useState(value)
@@ -30,9 +32,18 @@ export function EditableField({
     )
   }
 
-  return (
+  return type === 'text' ? (
     <input
-      type='text'
+      type={type}
+      defaultValue={value}
+      value={editedValue}
+      onChange={(e) => setEditedValue(e.target.value)}
+      onBlur={handleSave}
+      className={className}
+      autoFocus
+    />
+  ) : (
+    <textarea
       defaultValue={value}
       value={editedValue}
       onChange={(e) => setEditedValue(e.target.value)}
