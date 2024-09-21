@@ -1,11 +1,78 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Block, Website } from '@/types'
+import { updateBlock, updateWebsite } from '@/actions/websites'
 import { useCallback, useEffect, useRef } from 'react'
 
 import { toast } from 'sonner'
-import { updateWebsite } from '@/actions/websites'
 import { useState } from 'react'
+import { uuid } from 'uuidv4'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const GRID_COLUMNS = 4
+
+function calculateBlockPositions(
+  blocks: Block[],
+  resizedBlockId: string,
+  newWidth: number,
+  newHeight: number
+) {
+  const sortedBlocks = [...blocks].sort((a, b) => a.order_index - b.order_index)
+  const grid: (string | null)[][] = Array(GRID_COLUMNS)
+    .fill(null)
+    .map(() => Array(100).fill(null))
+
+  return sortedBlocks.map((block) => {
+    const isResizedBlock = block.id === resizedBlockId
+    const width = isResizedBlock ? newWidth : block.width
+    const height = isResizedBlock ? newHeight : block.height
+
+    // Find the first available position for the block
+    let x = 0,
+      y = 0
+    while (true) {
+      if (canPlaceBlock(grid, x, y, width, height)) {
+        placeBlock(grid, x, y, width, height, block.id)
+        return { ...block, x, y, width, height }
+      }
+      x++
+      if (x + width > GRID_COLUMNS) {
+        x = 0
+        y++
+      }
+    }
+  })
+}
+
+function canPlaceBlock(
+  grid: (string | null)[][],
+  x: number,
+  y: number,
+  width: number,
+  height: number
+) {
+  if (x + width > GRID_COLUMNS) return false
+  for (let i = x; i < x + width; i++) {
+    for (let j = y; j < y + height; j++) {
+      if (grid[i][j] !== null) return false
+    }
+  }
+  return true
+}
+
+function placeBlock(
+  grid: (string | null)[][],
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  id: string
+) {
+  for (let i = x; i < x + width; i++) {
+    for (let j = y; j < y + height; j++) {
+      grid[i][j] = id
+    }
+  }
+}
+
 export function useDebounce<T extends (...args: any[]) => any>(
   callback: T,
   delay: number
@@ -63,7 +130,7 @@ export function useWebsite(initialWebsite: Website) {
     if (!website) return
 
     const newBlock: Block = {
-      id: Date.now().toString(),
+      id: uuid(),
       content: {
         title: 'New block content'
       },
@@ -71,7 +138,7 @@ export function useWebsite(initialWebsite: Website) {
       block_type_id: '',
       x: 0,
       y: 0,
-      width: 2,
+      width: 1,
       height: 1,
       order_index: 0
     }
@@ -105,19 +172,44 @@ export function useWebsite(initialWebsite: Website) {
     })
   }
 
-  const handleResizeBlock = (
+  const handleResizeBlock = async (
     blockId: string,
     width: number,
     height: number
   ) => {
     if (!website) return
 
-    setWebsite({
-      ...website,
-      blocks: website.blocks.map((block) =>
-        block.id === blockId ? { ...block, width, height } : block
-      )
-    })
+    const updatedBlocks = calculateBlockPositions(
+      website.blocks,
+      blockId,
+      width,
+      height
+    )
+
+    try {
+      // Update the resized block in the database
+      await updateBlock(blockId, { width, height })
+
+      // Update all blocks with their new positions
+      for (const block of updatedBlocks) {
+        await updateBlock(block.id, {
+          x: block.x,
+          y: block.y,
+          width: block.width,
+          height: block.height
+        })
+      }
+
+      setWebsite({
+        ...website,
+        blocks: updatedBlocks
+      })
+
+      toast.success('Block resized successfully')
+    } catch (error) {
+      console.error('Error resizing block:', error)
+      toast.error('Failed to resize block')
+    }
   }
 
   return {

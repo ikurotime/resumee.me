@@ -94,7 +94,6 @@ function LeftColumn({
     </div>
   )
 }
-
 function RightColumn({
   website,
   isOwnProfile,
@@ -110,7 +109,10 @@ function RightColumn({
 }) {
   return (
     <div className='w-full md:w-2/3'>
-      <div className='grid grid-cols-4 gap-4'>
+      <div
+        className='grid grid-cols-4 auto-rows-[200px] gap-4'
+        style={{ height: 'calc(100vh - 2rem)' }}
+      >
         {website?.blocks?.map((block: Block, index: number) => (
           <DraggableCard
             key={block.id}
@@ -119,7 +121,9 @@ function RightColumn({
             onDelete={() => onDeleteBlock(block.id)}
             isEditable={isOwnProfile}
             block={block}
-            onResize={(width, height) => onResizeBlock(block.id, width, height)}
+            onChangeSize={(blockId, width, height) =>
+              onResizeBlock(blockId, width, height)
+            }
           />
         ))}
       </div>

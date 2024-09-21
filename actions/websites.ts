@@ -158,7 +158,7 @@ export async function updateBlock(
   content: Record<string, any>
 ) {
   const { error } = await supabase
-    .from('Blocks')
+    .from('blocks')
     .update({ content })
     .eq('id', blockId)
 

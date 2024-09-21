@@ -1,19 +1,13 @@
 'use client'
 
 import { Card, CardContent } from '@/components/ui/card'
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-  X
-} from 'lucide-react'
 import React, { useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
 import { Block } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { X } from 'lucide-react'
 import { updateBlock } from '@/actions/websites'
 
 interface DraggableCardProps {
@@ -22,7 +16,7 @@ interface DraggableCardProps {
   onDelete: (id: string) => void
   index: number
   moveCard: (dragIndex: number, hoverIndex: number) => void
-  onResize: (width: number, height: number) => void
+  onChangeSize: (blockId: string, width: number, height: number) => void
 }
 
 export function DraggableCard({
@@ -31,7 +25,7 @@ export function DraggableCard({
   onDelete,
   index,
   moveCard,
-  onResize
+  onChangeSize
 }: DraggableCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedContent, setEditedContent] = useState(block.content || {})
@@ -82,10 +76,8 @@ export function DraggableCard({
     setIsEditing(false)
   }
 
-  const handleResize = (widthChange: number, heightChange: number) => {
-    const newWidth = Math.max(1, Math.min(4, block.width + widthChange))
-    const newHeight = Math.max(1, block.height + heightChange)
-    onResize(newWidth, newHeight)
+  const handleChangeSize = (width: number, height: number) => {
+    onChangeSize(block.id, width, height)
   }
 
   const renderContent = () => {
@@ -160,39 +152,20 @@ export function DraggableCard({
           >
             <X className='h-4 w-4' />
           </Button>
-          <div className='absolute -bottom-2 -right-2 flex'>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='bg-white rounded-full shadow-md mr-1'
-              onClick={() => handleResize(0, -1)}
+          <div className='absolute -bottom-2 -right-2'>
+            <select
+              className='bg-white rounded-full shadow-md p-1'
+              value={`${block.width}x${block.height}`}
+              onChange={(e) => {
+                const [width, height] = e.target.value.split('x').map(Number)
+                handleChangeSize(width, height)
+              }}
             >
-              <ChevronUp className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='bg-white rounded-full shadow-md mr-1'
-              onClick={() => handleResize(0, 1)}
-            >
-              <ChevronDown className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='bg-white rounded-full shadow-md mr-1'
-              onClick={() => handleResize(-1, 0)}
-            >
-              <ChevronLeft className='h-4 w-4' />
-            </Button>
-            <Button
-              variant='ghost'
-              size='icon'
-              className='bg-white rounded-full shadow-md'
-              onClick={() => handleResize(1, 0)}
-            >
-              <ChevronRight className='h-4 w-4' />
-            </Button>
+              <option value='1x1'>1x1</option>
+              <option value='2x1'>2x1</option>
+              <option value='1x2'>1x2</option>
+              <option value='2x2'>2x2</option>
+            </select>
           </div>
         </>
       )}
