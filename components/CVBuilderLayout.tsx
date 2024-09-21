@@ -1,7 +1,7 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Block, User, Website } from '@/types'
+import { User, Website } from '@/types'
 
 import { DraggableCard } from '@/components/DraggableCard'
 import { EditableField } from '@/components/EditableField'
@@ -28,24 +28,21 @@ export function CVBuilderLayout({
   onResizeBlock: (blockId: string, width: number, height: number) => void
 }) {
   return (
-    <div className='h-screen flex flex-col'>
-      <div className='flex flex-1 flex-grow container mx-auto px-4 py-14'>
-        <div className='flex flex-1 flex-col md:flex-row gap-8'>
-          <LeftColumn
-            user={user}
-            website={website}
-            isOwnProfile={isOwnProfile}
-            onSave={onSave}
-          />
-          <RightColumn
-            website={website}
-            isOwnProfile={isOwnProfile}
-            onDeleteBlock={onDeleteBlock}
-            moveCard={moveCard}
-            onResizeBlock={onResizeBlock}
-          />
-        </div>
-      </div>
+    <div className='flex flex-1 flex-col md:flex-row h-screen overflow-hidden'>
+      <LeftColumn
+        user={user}
+        website={website}
+        isOwnProfile={isOwnProfile}
+        onSave={onSave}
+      />
+      <RightColumn
+        website={website}
+        isOwnProfile={isOwnProfile}
+        onDeleteBlock={onDeleteBlock}
+        moveCard={moveCard}
+        onResizeBlock={onResizeBlock}
+      />
+
       {isOwnProfile && <FloatingBottomBar onAddBlock={onAddBlock} />}
     </div>
   )
@@ -63,7 +60,7 @@ function LeftColumn({
   onSave: (field: string, value: string) => void
 }) {
   return (
-    <div className='w-full md:w-1/3 relative'>
+    <div className='w-full md:w-2/5 h-full overflow-hidden p-14 flex flex-col justify-between'>
       <div className='flex flex-col items-left gap-4'>
         <Avatar className='w-44 h-44'>
           <AvatarImage src={user.profile_picture} alt={user?.name} />
@@ -87,47 +84,48 @@ function LeftColumn({
       </div>
 
       {isOwnProfile && (
-        <div className='absolute bottom-0'>
+        <div>
           <WebMenu user={user} website={website} />
         </div>
       )}
     </div>
   )
 }
+
+interface RightColumnProps {
+  website: Website
+  isOwnProfile: boolean
+  onDeleteBlock: (blockId: string) => void
+  moveCard: (dragIndex: number, hoverIndex: number) => void
+  onResizeBlock: (blockId: string, width: number, height: number) => void
+}
+
 function RightColumn({
   website,
   isOwnProfile,
   onDeleteBlock,
   moveCard,
   onResizeBlock
-}: {
-  website: Website
-  isOwnProfile: boolean
-  onDeleteBlock: (blockId: string) => void
-  moveCard: (dragIndex: number, hoverIndex: number) => void
-  onResizeBlock: (blockId: string, width: number, height: number) => void
-}) {
+}: RightColumnProps) {
   return (
-    <div className='w-full md:w-2/3'>
-      <div
-        className='grid grid-cols-4 auto-rows-fr gap-4'
-        style={{ gridTemplateRows: 'repeat(4, minmax(0, 1fr))' }}
-      >
-        {website?.blocks?.map((block: Block, index: number) => (
+    <div className='flex flex-1 h-full  overflow-y-scroll p-4 bg-slate-500'>
+      <div className='grid grid-cols-4 grid-rows-5 gap-4'>
+        {website.blocks.map((block, index) => (
           <DraggableCard
             key={block.id}
             index={index}
-            moveCard={moveCard}
-            onDelete={() => onDeleteBlock(block.id)}
-            isEditable={isOwnProfile}
             block={block}
-            onChangeSize={(blockid, width, height) => {
-              console.log(width)
-              return onResizeBlock(blockid, width, height)
-            }}
+            isEditable={isOwnProfile}
+            onDelete={onDeleteBlock}
+            moveCard={moveCard}
+            onChangeSize={(blockid, width, height) =>
+              onResizeBlock(blockid, width, height)
+            }
           />
         ))}
       </div>
     </div>
   )
 }
+
+export default CVBuilderLayout

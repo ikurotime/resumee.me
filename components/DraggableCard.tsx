@@ -1,20 +1,20 @@
 'use client'
 
-import { AnimatePresence, motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
-import React, { useRef, useState } from 'react'
-import { useDrag, useDrop } from 'react-dnd'
+import React, { useEffect, useState } from 'react'
 
 import { Block } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { X } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { updateBlock } from '@/actions/websites'
+import { useDebounce } from '@/hooks'
 
 interface DraggableCardProps {
   block: Block
   isEditable: boolean
-  onDelete: (id: string) => void
+  onDelete: (blockId: string) => void
   index: number
   moveCard: (dragIndex: number, hoverIndex: number) => void
   onChangeSize: (blockId: string, width: number, height: number) => void
@@ -24,60 +24,27 @@ export function DraggableCard({
   block,
   isEditable,
   onDelete,
-  index,
-  moveCard,
   onChangeSize
 }: DraggableCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedContent, setEditedContent] = useState(block.content || {})
-  const [isHovered, setIsHovered] = useState(false)
-
-  const ref = useRef<HTMLDivElement>(null)
-
-  const [{ isDragging }, drag] = useDrag({
-    type: 'card',
-    item: { id: block.id, index, width: block.width, height: block.height },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging()
-    })
+  const [localSize, setLocalSize] = useState({
+    width: block.width,
+    height: block.height
   })
 
-  const [, drop] = useDrop({
-    accept: 'card',
-    hover(
-      item: { id: string; index: number; width: number; height: number },
-      monitor
-    ) {
-      if (!ref.current) {
-        return
-      }
-      const dragIndex = item.index
-      const hoverIndex = index
+  const debouncedOnChangeSize = useDebounce((width, height) => {
+    onChangeSize(block.id, width, height)
+  }, 500)
 
-      if (dragIndex === hoverIndex) {
-        return
-      }
+  useEffect(() => {
+    setLocalSize({ width: block.width, height: block.height })
+  }, [block.width, block.height])
 
-      const hoverBoundingRect = ref.current?.getBoundingClientRect()
-      const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-      const clientOffset = monitor.getClientOffset()
-      const hoverClientY = clientOffset!.y - hoverBoundingRect.top
-
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return
-      }
-
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return
-      }
-
-      moveCard(dragIndex, hoverIndex)
-      item.index = hoverIndex
-    }
-  })
-
-  drag(drop(ref))
+  const handleChangeSize = (width: number, height: number) => {
+    setLocalSize({ width, height })
+    debouncedOnChangeSize(width, height)
+  }
 
   const handleEdit = () => {
     setIsEditing(true)
@@ -95,10 +62,6 @@ export function DraggableCard({
   const handleCancel = () => {
     setEditedContent(block.content || {})
     setIsEditing(false)
-  }
-
-  const handleChangeSize = (width: number, height: number) => {
-    onChangeSize(block.id, width, height)
   }
 
   const renderContent = () => {
@@ -148,13 +111,12 @@ export function DraggableCard({
 
   return (
     <motion.div
-      ref={ref}
       layout
       initial={false}
       animate={{
-        gridColumn: `span ${block.width}`,
-        gridRow: `span ${block.height}`,
-        opacity: isDragging ? 0.5 : 1
+        gridColumn: `span ${localSize.width}`,
+        gridRow: `span ${localSize.height}`,
+        opacity: 1
       }}
       transition={{
         type: 'spring',
@@ -162,31 +124,17 @@ export function DraggableCard({
         damping: 50,
         mass: 1
       }}
-      className='relative'
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className='relative aspect-square'
       style={{
-        height: '100%',
-        minHeight: `${block.height * 100}px`
+        minHeight: `${localSize.height * 100}px`
       }}
     >
-      <AnimatePresence>
-        <motion.div
-          key={`${block.width}-${block.height}`}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ duration: 0.2 }}
-          className='h-full'
-        >
-          <Card className='h-full'>
-            <CardContent className='p-4 h-full flex flex-col'>
-              {renderContent()}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </AnimatePresence>
-      {isHovered && isEditable && (
+      <Card className='h-full'>
+        <CardContent className='p-4 h-full flex flex-col'>
+          {renderContent()}
+        </CardContent>
+      </Card>
+      {isEditable && (
         <>
           <Button
             variant='ghost'
@@ -199,10 +147,9 @@ export function DraggableCard({
           <div className='absolute -bottom-2 -right-2'>
             <select
               className='bg-white rounded-full shadow-md p-1'
-              value={`${block.width}x${block.height}`}
+              value={`${localSize.width}x${localSize.height}`}
               onChange={(e) => {
                 const [width, height] = e.target.value.split('x').map(Number)
-                console.log({ width, height })
                 handleChangeSize(width, height)
               }}
             >

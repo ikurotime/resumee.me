@@ -1,40 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Block, Website } from '@/types'
 import { updateBlock, updateWebsite } from '@/actions/websites'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { toast } from 'sonner'
-import { useState } from 'react'
 import { uuid } from 'uuidv4'
 
 const GRID_COLUMNS = 4
 
-function calculateBlockPositions(
-  blocks: Block[],
-  resizedBlockId: string,
-  newWidth: number,
-  newHeight: number
-) {
+function calculateBlockPositions(blocks: Block[]) {
   const sortedBlocks = [...blocks].sort((a, b) => a.order_index - b.order_index)
   const grid: (string | null)[][] = Array(GRID_COLUMNS)
     .fill(null)
     .map(() => Array(100).fill(null))
 
   return sortedBlocks.map((block) => {
-    const isResizedBlock = block.id === resizedBlockId
-    const width = isResizedBlock ? newWidth : block.width
-    const height = isResizedBlock ? newHeight : block.height
-
-    // Find the first available position for the block
     let x = 0,
       y = 0
     while (true) {
-      if (canPlaceBlock(grid, x, y, width, height)) {
-        placeBlock(grid, x, y, width, height, block.id)
-        return { ...block, x, y, width, height }
+      if (canPlaceBlock(grid, x, y, block.width, block.height)) {
+        placeBlock(grid, x, y, block.width, block.height, block.id)
+        return { ...block, x, y }
       }
       x++
-      if (x + width > GRID_COLUMNS) {
+      if (x + block.width > GRID_COLUMNS) {
         x = 0
         y++
       }
@@ -109,9 +98,40 @@ export const useAutosizeTextArea = (
     }
   }, [textAreaRef, value])
 }
-export function useWebsite(initialWebsite: Website) {
-  const [website, setWebsite] = useState<Website>(initialWebsite)
-  console.log({ website })
+
+export function useWebsite(initialWebsite: Website | null) {
+  const [website, setWebsite] = useState<Website | null>(initialWebsite)
+
+  const debouncedUpdateBlock = useDebounce(async (blockId, updates) => {
+    try {
+      await updateBlock(blockId, updates)
+      toast.success('Block updated successfully')
+    } catch (error) {
+      console.error('Error updating block:', error)
+      toast.error('Failed to update block')
+    }
+  }, 500)
+
+  const handleResizeBlock = (
+    blockId: string,
+    width: number,
+    height: number
+  ) => {
+    if (!website) return
+
+    const updatedBlocks = website.blocks.map((block) =>
+      block.id === blockId ? { ...block, width, height } : block
+    )
+
+    const newPositions = calculateBlockPositions(updatedBlocks)
+
+    setWebsite({
+      ...website,
+      blocks: newPositions
+    })
+
+    debouncedUpdateBlock(blockId, { width, height })
+  }
 
   const handleSave = async (field: string, value: string) => {
     if (!website) return
@@ -170,61 +190,6 @@ export function useWebsite(initialWebsite: Website) {
       ...website,
       blocks: updatedBlocks
     })
-  }
-
-  const handleResizeBlock = async (
-    blockId: string,
-    width: number,
-    height: number
-  ) => {
-    if (!website) return
-
-    // Optimistic update
-    const optimisticBlocks = website.blocks.map((block) =>
-      block.id === blockId ? { ...block, width, height } : block
-    )
-
-    setWebsite({
-      ...website,
-      blocks: optimisticBlocks
-    })
-
-    try {
-      const updatedBlocks = calculateBlockPositions(
-        optimisticBlocks,
-        blockId,
-        width,
-        height
-      )
-
-      // Update the resized block in the database
-      await updateBlock(blockId, { width, height })
-
-      // Update all blocks with their new positions
-      for (const block of updatedBlocks) {
-        await updateBlock(block.id, {
-          x: block.x,
-          y: block.y,
-          width: block.width,
-          height: block.height
-        })
-      }
-
-      setWebsite({
-        ...website,
-        blocks: updatedBlocks
-      })
-
-      toast.success('Block resized successfully')
-    } catch (error) {
-      console.error('Error resizing block:', error)
-      toast.error('Failed to resize block')
-      // Revert to the original state if there's an error
-      setWebsite({
-        ...website,
-        blocks: website.blocks
-      })
-    }
   }
 
   return {
