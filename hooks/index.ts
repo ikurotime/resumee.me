@@ -105,5 +105,27 @@ export function useWebsite(initialWebsite: Website) {
     })
   }
 
-  return { website, handleSave, handleAddBlock, handleDeleteBlock, moveCard }
+  const handleResizeBlock = (
+    blockId: string,
+    width: number,
+    height: number
+  ) => {
+    if (!website) return
+
+    setWebsite({
+      ...website,
+      blocks: website.blocks.map((block) =>
+        block.id === blockId ? { ...block, width, height } : block
+      )
+    })
+  }
+
+  return {
+    website,
+    handleSave,
+    handleAddBlock,
+    handleDeleteBlock,
+    moveCard,
+    handleResizeBlock
+  }
 }
