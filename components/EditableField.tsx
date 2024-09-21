@@ -15,7 +15,6 @@ export function EditableField({
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedValue, setEditedValue] = useState(value)
-
   const handleSave = () => {
     onSave(editedValue)
     setIsEditing(false)
@@ -49,7 +48,6 @@ export function EditableField({
       onChange={(e) => setEditedValue(e.target.value)}
       onBlur={handleSave}
       className={className}
-      autoFocus
     />
   )
 }

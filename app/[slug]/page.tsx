@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { ClientWrapper } from '@/components/ClientWrapper'
 import { DraggableCard } from '@/components/DraggableCard'
 import { EditableField } from '@/components/EditableField'
+import { FloatingBottomBar } from '@/components/FloatingBottomBar'
 import Loading from '@/components/Loading'
 import { WebMenu } from '@/components/WebMenu'
 import { toast } from 'sonner'
@@ -48,7 +49,6 @@ export default function CVBuilderPage({
 
   const handleSave = async (field: string, value: string) => {
     if (website) {
-      // Optimistic update
       setWebsite((prevWebsite) => ({
         ...prevWebsite!,
         [field]: value
@@ -58,12 +58,10 @@ export default function CVBuilderPage({
         const updatedWebsite = await updateWebsite(website.id!, {
           [field]: value
         })
-        // Update with server response (in case of any discrepancies)
         setWebsite(updatedWebsite)
         toast.success('Updated successfully')
       } catch (error) {
         console.error('Failed to update website:', error)
-        // Revert the optimistic update
         setWebsite((prevWebsite) => ({
           ...prevWebsite!,
           [field]: prevWebsite![field as keyof Website]
@@ -73,14 +71,51 @@ export default function CVBuilderPage({
     }
   }
 
+  const handleAddBlock = () => {
+    if (website) {
+      const newBlock: Block = {
+        id: Date.now().toString(),
+        content: { title: 'New Block', description: 'Add your content here' },
+        type: 'text'
+      }
+      setWebsite((prevWebsite) => ({
+        ...prevWebsite!,
+        blocks: [...(prevWebsite!.blocks || []), newBlock]
+      }))
+    }
+  }
+
+  const handleDeleteBlock = (blockId: string) => {
+    if (website) {
+      setWebsite((prevWebsite) => ({
+        ...prevWebsite!,
+        blocks: prevWebsite!.blocks.filter((block) => block.id !== blockId)
+      }))
+      // Here you would typically make an API call to delete the block from the backend
+    }
+  }
+
+  const moveCard = (dragIndex: number, hoverIndex: number) => {
+    if (website) {
+      const newBlocks = [...website.blocks]
+      const draggedBlock = newBlocks[dragIndex]
+      newBlocks.splice(dragIndex, 1)
+      newBlocks.splice(hoverIndex, 0, draggedBlock)
+      setWebsite((prevWebsite) => ({
+        ...prevWebsite!,
+        blocks: newBlocks
+      }))
+    }
+  }
+
   if (!website) {
     return <Loading />
   }
 
   return (
-    <div className='min-h-screen flex flex-col'>
+    <div className='h-screen flex flex-col '>
       <ClientWrapper>
-        <div className='flex flex-1 flex-grow container mx-auto px-4 py-8'>
+        <div className='flex flex-1 flex-grow container mx-auto px-4 py-8 '>
           <div className='flex flex-1 flex-col md:flex-row gap-8'>
             {/* Left Column */}
             <div className='w-full md:w-1/3 space-y-6 flex flex-col items-start relative'>
@@ -105,7 +140,7 @@ export default function CVBuilderPage({
                 value={website.description || ''}
                 onSave={(newValue) => handleSave('description', newValue)}
                 isEditable={isOwnProfile}
-                className='text-xl text-gray-600 w-full'
+                className='text-xl text-gray-600 w-full overflow-auto h-[60%] resize-none'
               />
 
               {/* Button section */}
@@ -125,19 +160,23 @@ export default function CVBuilderPage({
             </div>
 
             {/* Right Column */}
-            <div className='w-full md:w-2/3'>
-              <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
-                {(website.blocks || []).map((block: Block) => (
+            <div className='w-full md:w-2/3 '>
+              <div className='grid grid-cols-2 sm:grid-cols-3 gap-4'>
+                {(website.blocks || []).map((block: Block, index: number) => (
                   <DraggableCard
                     key={block.id}
                     block={block}
                     isEditable={isOwnProfile}
+                    onDelete={handleDeleteBlock}
+                    index={index}
+                    moveCard={moveCard}
                   />
                 ))}
               </div>
             </div>
           </div>
         </div>
+        {isOwnProfile && <FloatingBottomBar onAddBlock={handleAddBlock} />}
       </ClientWrapper>
     </div>
   )
