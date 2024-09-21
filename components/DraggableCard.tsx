@@ -39,7 +39,7 @@ export function DraggableCard({
 
   const [, drop] = useDrop({
     accept: 'card',
-    hover(item: { id: string; index: number }, monitor) {
+    hover(item: { id: string; index: number }) {
       if (!ref.current) {
         return
       }

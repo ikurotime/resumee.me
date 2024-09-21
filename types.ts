@@ -23,7 +23,7 @@ interface WebsiteTheme {
 
 // Website related types
 interface Website {
-  id?: UUID
+  id: UUID
   user_id: UUID
   theme_id?: UUID
   domain?: string
@@ -37,7 +37,7 @@ interface Website {
   is_published?: boolean
   created_at?: Date
   updated_at?: Date
-  blocks?: Block[]
+  blocks: Block[]
 }
 
 // Block type related types

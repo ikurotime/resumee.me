@@ -1,183 +1,35 @@
-'use client'
+import { getUserById, getWebsiteByPath } from '@/actions/websites'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Block, User, Website } from '@/types'
-import { Plus, Users } from 'lucide-react'
-import {
-  getUserById,
-  getWebsiteByPath,
-  updateWebsite
-} from '@/actions/websites'
-import { useEffect, useState } from 'react'
+import { CVBuilderClient } from '@/components/CVBuilderClient'
 
-import { Button } from '@/components/ui/button'
-import { ClientWrapper } from '@/components/ClientWrapper'
-import { DraggableCard } from '@/components/DraggableCard'
-import { EditableField } from '@/components/EditableField'
-import { FloatingBottomBar } from '@/components/FloatingBottomBar'
-import Loading from '@/components/Loading'
-import { WebMenu } from '@/components/WebMenu'
-import { toast } from 'sonner'
-import { useAuth } from '@/contexts/AuthContext'
-
-export default function CVBuilderPage({
+export default async function CVBuilderPage({
   params
 }: {
   params: { slug: string }
 }) {
-  const { user: currentUser } = useAuth()
-  const [user, setUser] = useState<User | null>(null)
-  const [website, setWebsite] = useState<Website | null>(null)
-  const [isOwnProfile, setIsOwnProfile] = useState(false)
-  const [showExpandableInput, setShowExpandableInput] = useState(false)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const websiteData = await getWebsiteByPath(params.slug)
-      const user = await getUserById(websiteData?.user_id)
-      setUser(user?.data)
-
-      if (websiteData) {
-        setWebsite(websiteData as Website)
-        if (currentUser) {
-          setIsOwnProfile(currentUser.id === websiteData.user_id)
-        }
-      }
-    }
-    fetchData()
-  }, [params.slug, currentUser])
-
-  const handleSave = async (field: string, value: string) => {
-    if (website) {
-      setWebsite((prevWebsite) => ({
-        ...prevWebsite!,
-        [field]: value
-      }))
-
-      try {
-        const updatedWebsite = await updateWebsite(website.id!, {
-          [field]: value
-        })
-        setWebsite(updatedWebsite)
-        toast.success('Updated successfully')
-      } catch (error) {
-        console.error('Failed to update website:', error)
-        setWebsite((prevWebsite) => ({
-          ...prevWebsite!,
-          [field]: prevWebsite![field as keyof Website]
-        }))
-        toast.error('Failed to update. Please try again.')
-      }
-    }
+  const websiteData = await getWebsiteByPath(params.slug)
+  if (!websiteData) {
+    return (
+      <div className='flex flex-col items-center justify-center min-h-screen'>
+        <h1 className='text-2xl font-bold mb-4'>Website not found</h1>
+        <p className='mb-4'>
+          The website you&apos;re looking for doesn&apos;t exist.
+        </p>
+        <a
+          href='/signup'
+          className='px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors'
+        >
+          Sign up to create your own
+        </a>
+      </div>
+    )
   }
-
-  const handleAddBlock = () => {
-    if (website) {
-      const newBlock: Block = {
-        id: Date.now().toString(),
-        content: { title: 'New Block', description: 'Add your content here' },
-        type: 'text'
-      }
-      setWebsite((prevWebsite) => ({
-        ...prevWebsite!,
-        blocks: [...(prevWebsite!.blocks || []), newBlock]
-      }))
-    }
-  }
-
-  const handleDeleteBlock = (blockId: string) => {
-    if (website) {
-      setWebsite((prevWebsite) => ({
-        ...prevWebsite!,
-        blocks: prevWebsite!.blocks.filter((block) => block.id !== blockId)
-      }))
-      // Here you would typically make an API call to delete the block from the backend
-    }
-  }
-
-  const moveCard = (dragIndex: number, hoverIndex: number) => {
-    if (website) {
-      const newBlocks = [...website.blocks]
-      const draggedBlock = newBlocks[dragIndex]
-      newBlocks.splice(dragIndex, 1)
-      newBlocks.splice(hoverIndex, 0, draggedBlock)
-      setWebsite((prevWebsite) => ({
-        ...prevWebsite!,
-        blocks: newBlocks
-      }))
-    }
-  }
-
-  if (!website) {
-    return <Loading />
-  }
+  const userData = await getUserById(websiteData?.user_id)
 
   return (
-    <div className='h-screen flex flex-col '>
-      <ClientWrapper>
-        <div className='flex flex-1 flex-grow container mx-auto px-4 py-8 '>
-          <div className='flex flex-1 flex-col md:flex-row gap-8'>
-            {/* Left Column */}
-            <div className='w-full md:w-1/3 space-y-6 flex flex-col items-start relative'>
-              <Avatar className='w-48 h-48 '>
-                <AvatarImage
-                  src={user?.profile_picture || ''}
-                  alt={website.title || ''}
-                />
-                <AvatarFallback>
-                  {website.title?.charAt(0) || ''}
-                </AvatarFallback>
-              </Avatar>
-              <EditableField
-                type='text'
-                value={website.title || ''}
-                onSave={(newValue) => handleSave('title', newValue)}
-                isEditable={isOwnProfile}
-                className='text-5xl font-bold '
-              />
-              <EditableField
-                type='textarea'
-                value={website.description || ''}
-                onSave={(newValue) => handleSave('description', newValue)}
-                isEditable={isOwnProfile}
-                className='text-xl text-gray-600 w-full overflow-auto h-[60%] resize-none'
-              />
-
-              {/* Button section */}
-              <div className='absolute bottom-0 left-0 flex space-x-2'>
-                <WebMenu user={user} website={website} />
-                <Button variant='ghost' size='icon'>
-                  <Users className='h-4 w-4 text-gray-500' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='icon'
-                  onClick={() => setShowExpandableInput(!showExpandableInput)}
-                >
-                  <Plus className='h-4 w-4 text-gray-500' />
-                </Button>
-              </div>
-            </div>
-
-            {/* Right Column */}
-            <div className='w-full md:w-2/3 '>
-              <div className='grid grid-cols-2 sm:grid-cols-3 gap-4'>
-                {(website.blocks || []).map((block: Block, index: number) => (
-                  <DraggableCard
-                    key={block.id}
-                    block={block}
-                    isEditable={isOwnProfile}
-                    onDelete={handleDeleteBlock}
-                    index={index}
-                    moveCard={moveCard}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        {isOwnProfile && <FloatingBottomBar onAddBlock={handleAddBlock} />}
-      </ClientWrapper>
-    </div>
+    <CVBuilderClient
+      initialWebsite={websiteData}
+      initialUser={userData?.data}
+    />
   )
 }

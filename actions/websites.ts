@@ -110,6 +110,7 @@ export async function getWebsiteByPath(pagePath: string) {
       updated_at,
       blocks (
         id,
+        website_id,
         block_type_id,
         x,
         y,
