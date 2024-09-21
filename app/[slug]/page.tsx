@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block, User, Website } from '@/types'
-import { Settings, Users } from 'lucide-react'
+import { Plus, Settings, Users } from 'lucide-react'
 import {
   getUserById,
   getWebsiteByPath,
@@ -14,7 +14,8 @@ import { Button } from '@/components/ui/button'
 import { ClientWrapper } from '@/components/ClientWrapper'
 import { DraggableCard } from '@/components/DraggableCard'
 import { EditableField } from '@/components/EditableField'
-import Link from 'next/link'
+import Loading from '@/components/Loading'
+import { WebMenu } from '@/components/WebMenu'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -27,6 +28,7 @@ export default function CVBuilderPage({
   const [user, setUser] = useState<User | null>(null)
   const [website, setWebsite] = useState<Website | null>(null)
   const [isOwnProfile, setIsOwnProfile] = useState(false)
+  const [showExpandableInput, setShowExpandableInput] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,71 +74,69 @@ export default function CVBuilderPage({
   }
 
   if (!website) {
-    return <div>Loading...</div>
+    return <Loading />
   }
 
   return (
-    <ClientWrapper>
-      <div className='flex flex-1 h-full container mx-auto px-4 py-8 '>
-        <div className='flex flex-1 flex-col md:flex-row gap-8'>
-          {/* Left Column */}
-          <div className='w-full md:w-1/3 flex-1 space-y-6 flex flex-col items-start relative'>
-            <Avatar className='w-48 h-48 '>
-              <AvatarImage
-                src={user?.profile_picture || ''}
-                alt={website.title || ''}
+    <div className='min-h-screen flex flex-col'>
+      <ClientWrapper>
+        <div className='flex flex-1 flex-grow container mx-auto px-4 py-8'>
+          <div className='flex flex-1 flex-col md:flex-row gap-8'>
+            {/* Left Column */}
+            <div className='w-full md:w-1/3 space-y-6 flex flex-col items-start relative'>
+              <Avatar className='w-48 h-48 '>
+                <AvatarImage
+                  src={user?.profile_picture || ''}
+                  alt={website.title || ''}
+                />
+                <AvatarFallback>
+                  {website.title?.charAt(0) || ''}
+                </AvatarFallback>
+              </Avatar>
+              <EditableField
+                value={website.title || ''}
+                onSave={(newValue) => handleSave('title', newValue)}
+                isEditable={isOwnProfile}
+                className='text-5xl font-bold '
               />
-              <AvatarFallback>{website.title?.charAt(0) || ''}</AvatarFallback>
-            </Avatar>
-            <EditableField
-              value={website.title || ''}
-              onSave={(newValue) => handleSave('title', newValue)}
-              isEditable={isOwnProfile}
-              className='text-5xl font-bold '
-            />
-            <EditableField
-              value={website.description || ''}
-              onSave={(newValue) => handleSave('description', newValue)}
-              isEditable={isOwnProfile}
-              className='text-xl text-gray-600'
-            />
+              <EditableField
+                value={website.description || ''}
+                onSave={(newValue) => handleSave('description', newValue)}
+                isEditable={isOwnProfile}
+                className='text-xl text-gray-600'
+              />
 
-            {/* Button section */}
-            {isOwnProfile ? (
+              {/* Button section */}
               <div className='absolute bottom-0 left-0 flex space-x-2'>
-                <Button variant='ghost' size='icon'>
-                  <Settings className='h-4 w-4 text-gray-500' />
-                </Button>
+                <WebMenu user={user} website={website} />
                 <Button variant='ghost' size='icon'>
                   <Users className='h-4 w-4 text-gray-500' />
                 </Button>
+                <Button
+                  variant='ghost'
+                  size='icon'
+                  onClick={() => setShowExpandableInput(!showExpandableInput)}
+                >
+                  <Plus className='h-4 w-4 text-gray-500' />
+                </Button>
               </div>
-            ) : (
-              <div className='absolute bottom-0 left-0 flex space-x-4 items-center'>
-                <Link href='/signup'>
-                  <Button className='w-full'>Create your Resumee</Button>
-                </Link>
-                <Link href='/login' className='text-gray-500 text-sm'>
-                  Login
-                </Link>
-              </div>
-            )}
-          </div>
+            </div>
 
-          {/* Right Column */}
-          <div className='w-full md:w-2/3'>
-            <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
-              {(website.blocks || []).map((block: Block) => (
-                <DraggableCard
-                  key={block.id}
-                  block={block}
-                  isEditable={isOwnProfile}
-                />
-              ))}
+            {/* Right Column */}
+            <div className='w-full md:w-2/3'>
+              <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
+                {(website.blocks || []).map((block: Block) => (
+                  <DraggableCard
+                    key={block.id}
+                    block={block}
+                    isEditable={isOwnProfile}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </ClientWrapper>
+      </ClientWrapper>
+    </div>
   )
 }

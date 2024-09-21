@@ -183,3 +183,20 @@ export async function updateWebsite(
   revalidatePath(`/${data.page_slug}`)
   return data as Website
 }
+
+export async function updatePassword(websiteId: string, password: string) {
+  const { data, error } = await supabase.auth.updateUser({
+    password
+  })
+  console.log(data, error)
+  if (error) throw error
+}
+
+export async function updateWebsiteSlug(websiteId: string, slug: string) {
+  const { error } = await supabase
+    .from('websites')
+    .update({ page_slug: slug })
+    .eq('id', websiteId)
+  if (error) throw error
+  revalidatePath(`/${slug}`)
+}
