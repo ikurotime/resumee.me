@@ -59,7 +59,7 @@ export default function ClaimLinkPage() {
     try {
       await signUp(formState.email, formState.password, formState.inputValue)
       // Redirect to the dashboard or profile page after successful signup
-      router.push('/dashboard')
+      router.push(`/${formState.inputValue}`)
     } catch (error) {
       console.error(error)
       updateFormState({

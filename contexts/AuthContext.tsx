@@ -1,8 +1,8 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { Session, User, WeakPassword } from '@supabase/supabase-js'
 
-import { User } from '@supabase/supabase-js'
 import { createWebsite } from '@/actions/websites'
 import { supabase } from '@/lib/supabase-client'
 
@@ -13,7 +13,10 @@ type AuthContextType = {
     password: string,
     websiteName: string
   ) => Promise<void>
-  signIn: (email: string, password: string) => Promise<void>
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{ user: User; session: Session; weakPassword?: WeakPassword }>
   signOut: () => Promise<void>
 }
 
@@ -51,11 +54,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
     if (error) throw error
+    return data
   }
 
   const signOut = async () => {

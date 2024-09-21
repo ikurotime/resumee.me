@@ -61,7 +61,21 @@ export async function addBlock(formData: FormData) {
 
   revalidatePath('/cv-builder')
 }
-export async function getWebsite(pagePath: string) {
+export async function getWebsiteByUserId(userId: string) {
+  const { data, error } = await supabase
+    .from('websites')
+    .select('*')
+    .eq('user_id', userId)
+    .single()
+
+  if (error) {
+    console.error('Error getting website by user id:', error)
+    return null
+  }
+  return data
+}
+
+export async function getWebsiteByPath(pagePath: string) {
   const { data, error } = await supabase
     .from('websites')
     .select(

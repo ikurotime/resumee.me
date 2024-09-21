@@ -1,5 +1,5 @@
 import { ClientWrapper } from '@/components/ClientWrapper'
-import { getWebsite } from '@/actions/websites'
+import { getWebsiteByPath } from '@/actions/websites'
 
 export default async function CVBuilderPage({
   params
@@ -7,7 +7,7 @@ export default async function CVBuilderPage({
   params: { slug: string }
 }) {
   console.log(params)
-  const website = await getWebsite(params.slug)
+  const website = await getWebsiteByPath(params.slug)
   return (
     <ClientWrapper>
       <div>
