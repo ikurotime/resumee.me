@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { ClientWrapper } from '@/components/ClientWrapper'
 import { DraggableCard } from '@/components/DraggableCard'
 import { EditableField } from '@/components/EditableField'
+import Link from 'next/link'
 import { toast } from 'sonner'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -29,12 +30,10 @@ export default function CVBuilderPage({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (currentUser?.id) {
-        const user = await getUserById(currentUser.id)
-        setUser(user?.data)
-      }
-
       const websiteData = await getWebsiteByPath(params.slug)
+      const user = await getUserById(websiteData?.user_id)
+      setUser(user?.data)
+
       if (websiteData) {
         setWebsite(websiteData as Website)
         if (currentUser) {
@@ -103,14 +102,25 @@ export default function CVBuilderPage({
             />
 
             {/* Button section */}
-            <div className='absolute bottom-0 left-0 flex space-x-2'>
-              <Button variant='ghost' size='icon'>
-                <Settings className='h-4 w-4 text-gray-500' />
-              </Button>
-              <Button variant='ghost' size='icon'>
-                <Users className='h-4 w-4 text-gray-500' />
-              </Button>
-            </div>
+            {isOwnProfile ? (
+              <div className='absolute bottom-0 left-0 flex space-x-2'>
+                <Button variant='ghost' size='icon'>
+                  <Settings className='h-4 w-4 text-gray-500' />
+                </Button>
+                <Button variant='ghost' size='icon'>
+                  <Users className='h-4 w-4 text-gray-500' />
+                </Button>
+              </div>
+            ) : (
+              <div className='absolute bottom-0 left-0 flex space-x-4 items-center'>
+                <Link href='/signup'>
+                  <Button className='w-full'>Create your Resumee</Button>
+                </Link>
+                <Link href='/login' className='text-gray-500 text-sm'>
+                  Login
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Right Column */}
