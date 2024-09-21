@@ -33,6 +33,7 @@ export function EditableField({
   return (
     <input
       type='text'
+      defaultValue={value}
       value={editedValue}
       onChange={(e) => setEditedValue(e.target.value)}
       onBlur={handleSave}

@@ -10,7 +10,6 @@ export async function middleware(req: NextRequest) {
     data: { user }
   } = await supabase.auth.getUser()
 
-  console.log('user', user)
   // If user is signed in and the current path is / or /login or /signup, redirect to /[user's slug]
   if (
     user &&

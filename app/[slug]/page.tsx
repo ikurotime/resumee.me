@@ -2,12 +2,12 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block, Website } from '@/types'
+import { getUserById, getWebsiteByPath } from '@/actions/websites'
 import { useEffect, useState } from 'react'
 
 import { ClientWrapper } from '@/components/ClientWrapper'
 import { DraggableCard } from '@/components/DraggableCard'
 import { EditableField } from '@/components/EditableField'
-import { getWebsiteByPath } from '@/actions/websites'
 import { useAuth } from '@/contexts/AuthContext'
 
 export default function CVBuilderPage({
@@ -15,22 +15,29 @@ export default function CVBuilderPage({
 }: {
   params: { slug: string }
 }) {
-  const { user } = useAuth()
+  const { user: currentUser } = useAuth()
+  const [user, setUser] = useState<any>(null)
   const [website, setWebsite] = useState<Website | null>(null)
   const [isOwnProfile, setIsOwnProfile] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
+      if (currentUser?.id) {
+        const user = await getUserById(currentUser.id)
+        console.log({ user })
+        setUser(user?.data)
+      }
+
       const websiteData = await getWebsiteByPath(params.slug)
       if (websiteData) {
         setWebsite(websiteData as Website)
-        if (user) {
-          setIsOwnProfile(user.id === websiteData.user_id)
+        if (currentUser) {
+          setIsOwnProfile(currentUser.id === websiteData.user_id)
         }
       }
     }
     fetchData()
-  }, [params.slug, user])
+  }, [params.slug, currentUser])
 
   if (!website) {
     return <div>Loading...</div>
@@ -41,23 +48,21 @@ export default function CVBuilderPage({
       <div className='container mx-auto px-4 py-8'>
         <div className='flex flex-col md:flex-row gap-8'>
           {/* Left Column */}
-          <div className='w-full md:w-1/3 space-y-6'>
-            <Avatar className='w-48 h-48 mx-auto'>
+          <div className='w-full md:w-1/3 space-y-6 flex flex-col items-start'>
+            <Avatar className='w-48 h-48 '>
               <AvatarImage
                 src={user?.profile_picture || ''}
-                alt={website.cv_name || ''}
+                alt={website.title || ''}
               />
-              <AvatarFallback>
-                {website.cv_name?.charAt(0) || ''}
-              </AvatarFallback>
+              <AvatarFallback>{website.title?.charAt(0) || ''}</AvatarFallback>
             </Avatar>
             <EditableField
-              value={website.cv_name || ''}
+              value={website.title || ''}
               onSave={(newValue) => {
                 /* Update name logic */
               }}
               isEditable={isOwnProfile}
-              className='text-3xl font-bold text-center'
+              className='text-3xl font-bold '
             />
             <EditableField
               value={website.description || ''}

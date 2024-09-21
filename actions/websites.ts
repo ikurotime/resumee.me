@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server'
 
 import { Website } from '@/types'
@@ -82,12 +83,11 @@ export async function getUserById(userId: string) {
     .select('*')
     .eq('id', userId)
     .single()
-
   if (error) {
     console.error('Error getting user by id:', error)
     return null
   }
-  return data
+  return { data, error }
 }
 
 export async function getWebsiteByPath(pagePath: string) {
@@ -150,4 +150,16 @@ export async function createWebsite(website: Website) {
   }
 
   return data
+}
+
+export async function updateBlock(
+  blockId: string,
+  content: Record<string, any>
+) {
+  const { error } = await supabase
+    .from('Blocks')
+    .update({ content })
+    .eq('id', blockId)
+
+  if (error) throw error
 }
