@@ -99,7 +99,9 @@ export default function Component() {
                 width={100}
                 height={100}
               />
-              <motion.span className='text-xl text-black font-bold'></motion.span>
+              <motion.span className='text-xl text-black font-bold'>
+                Resumee
+              </motion.span>
               <motion.h1
                 variants={itemVariants}
                 className='text-5xl sm:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
