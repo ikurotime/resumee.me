@@ -3,7 +3,7 @@ import { supabase } from '@/lib/supabase-server'
 
 async function getProfile(userId: string) {
   const { data, error } = await supabase
-    .from('Users')
+    .from('users')
     .select('*')
     .eq('id', userId)
     .single()
@@ -19,7 +19,7 @@ async function updateProfile(formData: FormData) {
   const userId = formData.get('userId') as string
 
   const { error } = await supabase
-    .from('Users')
+    .from('users')
     .update({ name })
     .eq('id', userId)
 
@@ -31,9 +31,9 @@ async function updateProfile(formData: FormData) {
 export default async function ProfilePage({
   params
 }: {
-  params: { userId: string }
+  params: { id: string }
 }) {
-  const profile = await getProfile(params.userId)
+  const profile = await getProfile(params.id)
 
   return (
     <div>

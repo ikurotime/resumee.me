@@ -4,10 +4,10 @@ import { getWebsite } from '@/actions/websites'
 export default async function CVBuilderPage({
   params
 }: {
-  params: { userId: string }
+  params: { slug: string }
 }) {
   console.log(params)
-  const website = await getWebsite(params.userId)
+  const website = await getWebsite(params.slug)
   return (
     <ClientWrapper>
       <div>
