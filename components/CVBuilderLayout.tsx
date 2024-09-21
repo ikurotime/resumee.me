@@ -15,7 +15,8 @@ export function CVBuilderLayout({
   onSave,
   onAddBlock,
   onDeleteBlock,
-  moveCard
+  moveCard,
+  onResizeBlock
 }: {
   user: User
   website: Website
@@ -24,6 +25,7 @@ export function CVBuilderLayout({
   onAddBlock: () => void
   onDeleteBlock: (blockId: string) => void
   moveCard: (dragIndex: number, hoverIndex: number) => void
+  onResizeBlock: (blockId: string, width: number, height: number) => void
 }) {
   return (
     <div className='h-screen flex flex-col'>
@@ -40,6 +42,7 @@ export function CVBuilderLayout({
             isOwnProfile={isOwnProfile}
             onDeleteBlock={onDeleteBlock}
             moveCard={moveCard}
+            onResizeBlock={onResizeBlock}
           />
         </div>
       </div>
@@ -96,26 +99,30 @@ function RightColumn({
   website,
   isOwnProfile,
   onDeleteBlock,
-  moveCard
+  moveCard,
+  onResizeBlock
 }: {
   website: Website
   isOwnProfile: boolean
   onDeleteBlock: (blockId: string) => void
   moveCard: (dragIndex: number, hoverIndex: number) => void
+  onResizeBlock: (blockId: string, width: number, height: number) => void
 }) {
-  console.log(website)
   return (
-    <div className='w-full md:w-2/3 space-y-6'>
-      {website?.blocks?.map((block: Block, index: number) => (
-        <DraggableCard
-          key={block.id}
-          index={index}
-          moveCard={moveCard}
-          onDelete={() => onDeleteBlock(block.id)}
-          isEditable={isOwnProfile}
-          block={block}
-        />
-      ))}
+    <div className='w-full md:w-2/3'>
+      <div className='grid grid-cols-4 gap-4'>
+        {website?.blocks?.map((block: Block, index: number) => (
+          <DraggableCard
+            key={block.id}
+            index={index}
+            moveCard={moveCard}
+            onDelete={() => onDeleteBlock(block.id)}
+            isEditable={isOwnProfile}
+            block={block}
+            onResize={(width, height) => onResizeBlock(block.id, width, height)}
+          />
+        ))}
+      </div>
     </div>
   )
 }

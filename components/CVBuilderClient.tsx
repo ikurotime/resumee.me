@@ -16,8 +16,14 @@ export function CVBuilderClient({
   initialUser: User
 }) {
   const { user: currentUser } = useAuth()
-  const { website, handleSave, handleAddBlock, handleDeleteBlock, moveCard } =
-    useWebsite(initialWebsite)
+  const {
+    website,
+    handleSave,
+    handleAddBlock,
+    handleDeleteBlock,
+    moveCard,
+    handleResizeBlock
+  } = useWebsite(initialWebsite)
   const isOwnProfile = currentUser?.id === initialWebsite?.user_id
 
   if (!website) {
@@ -34,6 +40,7 @@ export function CVBuilderClient({
         onAddBlock={handleAddBlock}
         onDeleteBlock={handleDeleteBlock}
         moveCard={moveCard}
+        onResizeBlock={handleResizeBlock}
       />
     </ClientWrapper>
   )
