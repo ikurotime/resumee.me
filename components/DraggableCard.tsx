@@ -2,10 +2,11 @@
 
 import { Card, CardContent } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
+import { useDrag, useDrop } from 'react-dnd'
 
 import { Block } from '@/types'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { EditableField } from '@/components/EditableField'
 import { X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { updateBlock } from '@/actions/websites'
@@ -24,14 +25,15 @@ export function DraggableCard({
   block,
   isEditable,
   onDelete,
+  index,
+  moveCard,
   onChangeSize
 }: DraggableCardProps) {
-  const [isEditing, setIsEditing] = useState(false)
-  const [editedContent, setEditedContent] = useState(block.content || {})
   const [localSize, setLocalSize] = useState({
     width: block.width,
     height: block.height
   })
+  const [isHovered, setIsHovered] = useState(false)
 
   const debouncedOnChangeSize = useDebounce((width, height) => {
     onChangeSize(block.id, width, height)
@@ -46,77 +48,33 @@ export function DraggableCard({
     debouncedOnChangeSize(width, height)
   }
 
-  const handleEdit = () => {
-    setIsEditing(true)
-  }
+  const [{ isDragging }, drag] = useDrag({
+    type: 'CARD',
+    item: { id: block.id, index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging()
+    })
+  })
 
-  const handleSave = async () => {
-    try {
-      await updateBlock(block.id, editedContent)
-      setIsEditing(false)
-    } catch (error) {
-      console.error('Failed to update block:', error)
+  const [, drop] = useDrop({
+    accept: 'CARD',
+    hover(item: { id: string; index: number }) {
+      if (item.index !== index) {
+        moveCard(item.index, index)
+        item.index = index
+      }
     }
-  }
-
-  const handleCancel = () => {
-    setEditedContent(block.content || {})
-    setIsEditing(false)
-  }
-
-  const renderContent = () => {
-    if (isEditing) {
-      return (
-        <div className='space-y-2'>
-          <Input
-            value={editedContent.title || ''}
-            onChange={(e) =>
-              setEditedContent({ ...editedContent, title: e.target.value })
-            }
-            placeholder='Title'
-          />
-          <textarea
-            value={editedContent.description || ''}
-            onChange={(e) =>
-              setEditedContent({
-                ...editedContent,
-                description: e.target.value
-              })
-            }
-            placeholder='Description'
-            className='w-full p-2 border rounded'
-          />
-          <div className='flex justify-end space-x-2'>
-            <Button onClick={handleSave}>Save</Button>
-            <Button variant='outline' onClick={handleCancel}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      )
-    }
-
-    return (
-      <>
-        <h3 className='font-bold'>{block.content?.title || 'Untitled'}</h3>
-        <p>{block.content?.description || 'No description'}</p>
-        {isEditable && (
-          <Button onClick={handleEdit} className='mt-2'>
-            Edit
-          </Button>
-        )}
-      </>
-    )
-  }
+  })
 
   return (
     <motion.div
+      ref={(node) => drag(drop(node))}
       layout
       initial={false}
       animate={{
         gridColumn: `span ${localSize.width}`,
         gridRow: `span ${localSize.height}`,
-        opacity: 1
+        opacity: isDragging ? 0.5 : 1
       }}
       transition={{
         type: 'spring',
@@ -128,13 +86,32 @@ export function DraggableCard({
       style={{
         minHeight: `${localSize.height * 100}px`
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <Card className='h-full'>
         <CardContent className='p-4 h-full flex flex-col'>
-          {renderContent()}
+          <EditableField
+            value={block.content?.title || ''}
+            onSave={(value) =>
+              updateBlock(block.id, { ...block.content, title: value })
+            }
+            isEditable={isEditable}
+            className='text-xl font-bold'
+            type='text'
+          />
+          <EditableField
+            value={block.content?.description || ''}
+            onSave={(value) =>
+              updateBlock(block.id, { ...block.content, description: value })
+            }
+            isEditable={isEditable}
+            className='text-gray-500 mt-2'
+            type='textarea'
+          />
         </CardContent>
       </Card>
-      {isEditable && (
+      {isEditable && isHovered && (
         <>
           <Button
             variant='ghost'
