@@ -1,5 +1,6 @@
 'use server'
 
+import { Website } from '@/types'
 import { revalidatePath } from 'next/cache'
 import { supabase } from '@/lib/supabase-server'
 
@@ -75,12 +76,27 @@ export async function getWebsiteByUserId(userId: string) {
   return data
 }
 
+export async function getUserById(userId: string) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single()
+
+  if (error) {
+    console.error('Error getting user by id:', error)
+    return null
+  }
+  return data
+}
+
 export async function getWebsiteByPath(pagePath: string) {
   const { data, error } = await supabase
     .from('websites')
     .select(
       `
       id,
+      user_id,
       domain,
       title,
       cv_name,
@@ -90,6 +106,8 @@ export async function getWebsiteByPath(pagePath: string) {
       page_content,
       description,
       is_published,
+      created_at,
+      updated_at,
       blocks (
         id,
         block_type_id,
@@ -116,12 +134,12 @@ export async function getWebsiteByPath(pagePath: string) {
   return data
 }
 
-export async function createWebsite(userId: string, pageName: string) {
+export async function createWebsite(website: Website) {
   const { data, error } = await supabase.from('websites').insert({
-    user_id: userId,
-    page_name: pageName,
+    user_id: website.user_id,
+    page_name: website.page_name,
     domain: 'resumee.me',
-    page_slug: pageName,
+    page_slug: website.page_slug,
     is_cv_page: true,
     is_published: false
   })

@@ -88,41 +88,20 @@ export default function Component() {
 
   return (
     <div className='min-h-screen bg-white overflow-hidden'>
-      <header className='py-6 px-4 sm:px-6 lg:px-8 border-b sticky top-0 bg-white/80 backdrop-blur-sm z-10'>
-        <div className='container mx-auto flex justify-between items-center'>
-          <Link href='/' className='text-2xl font-bold text-gray-900'>
-            Resumee.me
-          </Link>
-          <nav className='hidden md:flex space-x-8'>
-            <Link
-              href='#features'
-              className='text-gray-600 hover:text-gray-900 transition-colors'
-            >
-              Features
-            </Link>
-            <Link
-              href='#how-it-works'
-              className='text-gray-600 hover:text-gray-900 transition-colors'
-            >
-              How It Works
-            </Link>
-            <Link
-              href='#pricing'
-              className='text-gray-600 hover:text-gray-900 transition-colors'
-            >
-              Pricing
-            </Link>
-          </nav>
-          <Button className='bg-black hover:bg-gray-800 text-white'>
-            Get Started
-          </Button>
-        </div>
-      </header>
-
-      <main className='space-y-20'>
+      <main className='space-y-20 '>
         <AnimatedSection id='hero'>
           <div className='container mx-auto'>
-            <motion.div className='text-center'>
+            <motion.div className='text-center gap-4 flex flex-col items-center  min-h-[75vh] justify-center'>
+              <motion.img
+                src='/icon.png'
+                className='mx-auto'
+                alt='Resumee.me'
+                width={100}
+                height={100}
+              />
+              <motion.span className='text-xl text-black font-bold'>
+                Resumee
+              </motion.span>
               <motion.h1
                 variants={itemVariants}
                 className='text-5xl sm:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500'
@@ -139,13 +118,19 @@ export default function Component() {
               </motion.p>
               <motion.div
                 variants={itemVariants}
-                className='flex justify-center space-x-4'
+                className='flex flex-col justify-center gap-4'
               >
                 <Link
                   href='/signup'
                   className='bg-black hover:bg-gray-800 text-white text-xl font-bold h-14 rounded-md px-12 items-center flex'
                 >
                   Create Your Profile
+                </Link>
+                <Link
+                  href='/login'
+                  className='text-sm text-gray-600 hover:underline'
+                >
+                  Log in
                 </Link>
               </motion.div>
             </motion.div>

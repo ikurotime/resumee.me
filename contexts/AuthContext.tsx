@@ -1,8 +1,9 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { Session, User, WeakPassword } from '@supabase/supabase-js'
+import { Session, WeakPassword } from '@supabase/supabase-js'
 
+import { User } from '@/types'
 import { createWebsite } from '@/actions/websites'
 import { supabase } from '@/lib/supabase-client'
 
@@ -16,7 +17,11 @@ type AuthContextType = {
   signIn: (
     email: string,
     password: string
-  ) => Promise<{ user: User; session: Session; weakPassword?: WeakPassword }>
+  ) => Promise<{
+    user: User
+    session: Session
+    weakPassword?: WeakPassword | undefined
+  }>
   signOut: () => Promise<void>
 }
 
@@ -30,7 +35,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setUser(session?.user ?? null)
+        setUser(session?.user as unknown as User | null)
       }
     )
 
@@ -49,7 +54,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log('error', error)
     if (error) throw error
     if (data && data.user) {
-      createWebsite(data.user.id, websiteName)
+      createWebsite({
+        user_id: data.user.id,
+        page_name: websiteName
+      })
     }
   }
 
@@ -66,7 +74,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   }
-
   return (
     <AuthContext.Provider value={{ user, signUp, signIn, signOut }}>
       {children}
