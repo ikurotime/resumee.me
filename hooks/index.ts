@@ -109,10 +109,10 @@ export const useAutosizeTextArea = (
     }
   }, [textAreaRef, value])
 }
-
 export function useWebsite(initialWebsite: Website) {
   const [website, setWebsite] = useState<Website>(initialWebsite)
   console.log({ website })
+
   const handleSave = async (field: string, value: string) => {
     if (!website) return
 
@@ -130,6 +130,8 @@ export function useWebsite(initialWebsite: Website) {
     if (!website) return
 
     const newBlock: Block = {
+      width: 1,
+      height: 1,
       id: uuid(),
       content: {
         title: 'New block content'
@@ -138,8 +140,6 @@ export function useWebsite(initialWebsite: Website) {
       block_type_id: '',
       x: 0,
       y: 0,
-      width: 1,
-      height: 1,
       order_index: 0
     }
 
@@ -179,14 +179,24 @@ export function useWebsite(initialWebsite: Website) {
   ) => {
     if (!website) return
 
-    const updatedBlocks = calculateBlockPositions(
-      website.blocks,
-      blockId,
-      width,
-      height
+    // Optimistic update
+    const optimisticBlocks = website.blocks.map((block) =>
+      block.id === blockId ? { ...block, width, height } : block
     )
 
+    setWebsite({
+      ...website,
+      blocks: optimisticBlocks
+    })
+
     try {
+      const updatedBlocks = calculateBlockPositions(
+        optimisticBlocks,
+        blockId,
+        width,
+        height
+      )
+
       // Update the resized block in the database
       await updateBlock(blockId, { width, height })
 
@@ -209,6 +219,11 @@ export function useWebsite(initialWebsite: Website) {
     } catch (error) {
       console.error('Error resizing block:', error)
       toast.error('Failed to resize block')
+      // Revert to the original state if there's an error
+      setWebsite({
+        ...website,
+        blocks: website.blocks
+      })
     }
   }
 

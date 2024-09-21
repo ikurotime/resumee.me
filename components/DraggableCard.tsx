@@ -1,7 +1,8 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
 import { Card, CardContent } from '@/components/ui/card'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 
 import { Block } from '@/types'
@@ -31,9 +32,11 @@ export function DraggableCard({
   const [editedContent, setEditedContent] = useState(block.content || {})
   const [isHovered, setIsHovered] = useState(false)
 
+  const ref = useRef<HTMLDivElement>(null)
+
   const [{ isDragging }, drag] = useDrag({
     type: 'card',
-    item: { id: block.id, index },
+    item: { id: block.id, index, width: block.width, height: block.height },
     collect: (monitor) => ({
       isDragging: monitor.isDragging()
     })
@@ -41,21 +44,39 @@ export function DraggableCard({
 
   const [, drop] = useDrop({
     accept: 'card',
-    hover(item: { id: string; index: number }) {
+    hover(
+      item: { id: string; index: number; width: number; height: number },
+      monitor
+    ) {
       if (!ref.current) {
         return
       }
       const dragIndex = item.index
       const hoverIndex = index
+
       if (dragIndex === hoverIndex) {
         return
       }
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+      const clientOffset = monitor.getClientOffset()
+      const hoverClientY = clientOffset!.y - hoverBoundingRect.top
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return
+      }
+
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return
+      }
+
       moveCard(dragIndex, hoverIndex)
       item.index = hoverIndex
     }
   })
 
-  const ref = React.useRef<HTMLDivElement>(null)
   drag(drop(ref))
 
   const handleEdit = () => {
@@ -126,22 +147,45 @@ export function DraggableCard({
   }
 
   return (
-    <div
+    <motion.div
       ref={ref}
-      style={{
-        opacity: isDragging ? 0.5 : 1,
+      layout
+      initial={false}
+      animate={{
         gridColumn: `span ${block.width}`,
-        gridRow: `span ${block.height}`
+        gridRow: `span ${block.height}`,
+        opacity: isDragging ? 0.5 : 1
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 500,
+        damping: 50,
+        mass: 1
       }}
       className='relative'
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      style={{
+        height: '100%',
+        minHeight: `${block.height * 100}px`
+      }}
     >
-      <Card className='h-full'>
-        <CardContent className='p-4 h-full flex flex-col'>
-          {renderContent()}
-        </CardContent>
-      </Card>
+      <AnimatePresence>
+        <motion.div
+          key={`${block.width}-${block.height}`}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.2 }}
+          className='h-full'
+        >
+          <Card className='h-full'>
+            <CardContent className='p-4 h-full flex flex-col'>
+              {renderContent()}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
       {isHovered && isEditable && (
         <>
           <Button
@@ -158,6 +202,7 @@ export function DraggableCard({
               value={`${block.width}x${block.height}`}
               onChange={(e) => {
                 const [width, height] = e.target.value.split('x').map(Number)
+                console.log({ width, height })
                 handleChangeSize(width, height)
               }}
             >
@@ -169,6 +214,6 @@ export function DraggableCard({
           </div>
         </>
       )}
-    </div>
+    </motion.div>
   )
 }

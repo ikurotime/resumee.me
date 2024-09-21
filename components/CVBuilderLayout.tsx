@@ -110,8 +110,8 @@ function RightColumn({
   return (
     <div className='w-full md:w-2/3'>
       <div
-        className='grid grid-cols-4 auto-rows-[200px] gap-4'
-        style={{ height: 'calc(100vh - 2rem)' }}
+        className='grid grid-cols-4 auto-rows-fr gap-4'
+        style={{ gridTemplateRows: 'repeat(4, minmax(0, 1fr))' }}
       >
         {website?.blocks?.map((block: Block, index: number) => (
           <DraggableCard
@@ -121,9 +121,10 @@ function RightColumn({
             onDelete={() => onDeleteBlock(block.id)}
             isEditable={isOwnProfile}
             block={block}
-            onChangeSize={(blockId, width, height) =>
-              onResizeBlock(blockId, width, height)
-            }
+            onChangeSize={(blockid, width, height) => {
+              console.log(width)
+              return onResizeBlock(blockid, width, height)
+            }}
           />
         ))}
       </div>
