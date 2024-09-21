@@ -163,3 +163,23 @@ export async function updateBlock(
 
   if (error) throw error
 }
+
+export async function updateWebsite(
+  websiteId: string,
+  updates: Partial<Website>
+) {
+  const { data, error } = await supabase
+    .from('websites')
+    .update(updates)
+    .eq('id', websiteId)
+    .select()
+    .single()
+
+  if (error) {
+    console.error('Error updating website:', error)
+    throw error
+  }
+
+  revalidatePath(`/${data.page_slug}`)
+  return data as Website
+}

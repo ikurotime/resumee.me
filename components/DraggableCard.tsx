@@ -19,7 +19,7 @@ export function DraggableCard({ block, isEditable }: DraggableCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedContent, setEditedContent] = useState(block.content || {})
 
-  const [{ isDragging }, drag] = useDrag(() => ({
+  const [{ isDragging }] = useDrag(() => ({
     type: 'card',
     item: { id: block.id },
     collect: (monitor) => ({
@@ -93,7 +93,6 @@ export function DraggableCard({ block, isEditable }: DraggableCardProps) {
 
   return (
     <motion.div
-      ref={drag}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       style={{ opacity: isDragging ? 0.5 : 1 }}
