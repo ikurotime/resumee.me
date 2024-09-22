@@ -13,6 +13,7 @@ import {
 
 import { AnimatedLinkInput } from './AnimatedLinkInput'
 import { Button } from '@/components/ui/button'
+import ColorWheel from './ColorWheel'
 import { ImageUpload } from './ImageUpload'
 import { TooltipComponent } from './TooltipComponent'
 import { WebMenu } from './WebMenu'
@@ -30,6 +31,7 @@ export function FloatingBottomBar({ user }: FloatingBottomBarProps) {
   const { isSaving, website, saveWebsite } = useSite()
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [showImageUpload, setShowImageUpload] = useState(false)
+  const [isPickerVisible, setPickerVisible] = useState(false)
 
   const handleAddProfileBlock = () =>
     createNewBlock({ type: 'profile', size: { w: 1, h: 1 } })
@@ -41,7 +43,9 @@ export function FloatingBottomBar({ user }: FloatingBottomBarProps) {
     createNewBlock({ type: 'image', size: { w: 1, h: 1 }, imageUrl })
   const handleAddNoteBlock = () =>
     createNewBlock({ type: 'note', size: { w: 1, h: 1 } })
-
+  const handleColorPick = () => {
+    setPickerVisible(!isPickerVisible)
+  }
   const handleAddLink = (url: string) => {
     const domain = new URL(url).hostname.replace('www.', '')
     const type = domain.split('.')[0]
@@ -133,6 +137,10 @@ export function FloatingBottomBar({ user }: FloatingBottomBarProps) {
         </div>
 
         <div className='flex items-center gap-2'>
+          <ColorWheel
+            isPickerVisible={isPickerVisible}
+            onColorPick={handleColorPick}
+          />
           <TooltipComponent label='Profile picture'>
             <Button
               onClick={handleAddProfileBlock}

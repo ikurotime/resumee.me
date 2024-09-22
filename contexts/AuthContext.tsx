@@ -69,7 +69,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             type: 'profile',
             imageUrl: '',
             content: '',
-            title: ''
+            title: '',
+            fullSizedImage: false
           },
           {
             i: v4(),
@@ -82,7 +83,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             type: 'info',
             title: '',
             content: '',
-            imageUrl: ''
+            imageUrl: '',
+            fullSizedImage: false
           },
           {
             i: v4(),
@@ -95,7 +97,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             type: 'info',
             title: 'Welcome to your page!',
             content: 'Use the buttons below to add some cards.',
-            imageUrl: ''
+            imageUrl: '',
+            fullSizedImage: false
           }
         ]
       })

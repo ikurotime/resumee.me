@@ -5,9 +5,11 @@ type UUID = string
 export interface BlockProps {
   block: Block
   user: User
+  isOwnProfile: boolean
 }
 export interface GridLayoutProps {
   user: User
+  isOwnProfile: boolean
 }
 // User related types
 interface User {
@@ -39,7 +41,7 @@ interface Website {
   page_name?: string
   page_slug?: string
   is_cv_page?: boolean
-  page_content?: Record<string, any>
+  page_content?: string
   description?: string
   is_published?: boolean
   created_at?: Date
@@ -60,6 +62,7 @@ interface Block {
   type?: string
   content?: string
   imageUrl?: string
+  fullSizedImage?: boolean
 }
 
 // Technology related types

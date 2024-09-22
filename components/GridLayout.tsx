@@ -35,7 +35,7 @@ const DeleteButton = ({ id }: { id: string }) => {
     </button>
   )
 }
-function GridLayout({ user }: GridLayoutProps) {
+function GridLayout({ user, isOwnProfile }: GridLayoutProps) {
   const ResponsiveReactGridLayout = useMemo(() => WidthProvider(Responsive), [])
   const { saveBlockOrder, website } = useSite()
   const layout = {
@@ -139,7 +139,9 @@ function GridLayout({ user }: GridLayoutProps) {
           <motion.div
             key={block.i}
             variants={itemVariants}
-            className='bg-[#fff] relative shadow border flex justify-center items-center rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing group'
+            className={`bg-[#fff] relative shadow-md flex justify-center items-center rounded-2xl text-2xl text-[#1d1d1f] visible ${
+              isOwnProfile ? 'cursor-grab active:cursor-grabbing group' : ''
+            }`}
           >
             <div className='absolute z-[9999] -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity'>
               <DeleteButton id={block.i} />
@@ -150,7 +152,7 @@ function GridLayout({ user }: GridLayoutProps) {
               </div>
             </div>
 
-            <Block block={block} user={user} />
+            <Block block={block} user={user} isOwnProfile={isOwnProfile} />
           </motion.div>
         ))}
       </ResponsiveReactGridLayout>
@@ -158,7 +160,7 @@ function GridLayout({ user }: GridLayoutProps) {
   )
 }
 
-export function Block({ block, user }: BlockProps) {
+export function Block({ block, user, isOwnProfile = false }: BlockProps) {
   const { website, saveWebsite } = useSite()
   const [title, setTitle] = useState(block.title || '') // State for block title
   const [description, setDescription] = useState(block?.content || '') // State for description
@@ -209,7 +211,7 @@ export function Block({ block, user }: BlockProps) {
           <EditableField
             value={title} // Use the block's title directly
             onSave={handleTitleSave} // Save the block title
-            isEditable={true}
+            isEditable={isOwnProfile}
             className={`text-xl font-bold mb-2 cursor-text ${social.bgColor} focus:ring-offset-0 focus:ring-0`}
             type='text'
           />
@@ -231,6 +233,8 @@ export function Block({ block, user }: BlockProps) {
           <ImageAvatarToggleBlock
             imageSrc={user?.profile_picture || ''}
             userName={user.name || 'User'}
+            editable={isOwnProfile}
+            block={block}
           />
         )
       case 'info':
@@ -239,14 +243,14 @@ export function Block({ block, user }: BlockProps) {
             <EditableField
               value={title} // Use the block's title directly
               onSave={handleTitleSave}
-              isEditable={true}
+              isEditable={isOwnProfile}
               className='text-4xl font-bold mb-2 cursor-text'
               type='text'
             />
             <EditableField
               value={description} // Use the block's description directly
               onSave={handleDescriptionSave}
-              isEditable={true}
+              isEditable={isOwnProfile}
               className='text-gray-600 cursor-text flex w-full'
               type='textarea'
             />
@@ -258,6 +262,8 @@ export function Block({ block, user }: BlockProps) {
             <ImageAvatarToggleBlock
               imageSrc={block.imageUrl || ''}
               userName={'Image'}
+              editable={isOwnProfile}
+              block={block}
             />
           </div>
         )
@@ -267,14 +273,14 @@ export function Block({ block, user }: BlockProps) {
             <EditableField
               value={title} // Use the block's title directly
               onSave={handleTitleSave}
-              isEditable={true}
+              isEditable={isOwnProfile}
               className='text-gray-600 cursor-text flex w-full font-bold text-xl'
               type='text'
             />
             <EditableField
               value={noteContent || 'Edit me! '} // Use the note content
               onSave={handleNoteContentSave}
-              isEditable={true}
+              isEditable={isOwnProfile}
               className='text-gray-600 cursor-text flex w-full text-base h-full resize-none'
               type='textarea'
             />

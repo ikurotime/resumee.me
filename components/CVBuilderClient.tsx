@@ -20,7 +20,7 @@ export function CVBuilderClient({
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (initialWebsite && initialUser && currentUser) {
+    if (initialWebsite && initialUser) {
       setIsLoading(false)
     }
   }, [initialWebsite, initialUser, currentUser])

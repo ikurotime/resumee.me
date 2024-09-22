@@ -12,6 +12,8 @@ interface SiteContextType {
   saveBlockOrder: (
     newOrder: { i: string; x: number; y: number }[]
   ) => Promise<void>
+  bgColor: string
+  setBgColor: React.Dispatch<React.SetStateAction<string>>
 }
 
 const SiteContext = createContext<SiteContextType | undefined>(undefined)
@@ -21,7 +23,7 @@ export const SiteProvider: React.FC<{
   initialWebsite: Website
 }> = ({ children, initialWebsite }) => {
   const [website, setWebsite] = useState<Website | null>(initialWebsite)
-
+  const [bgColor, setBgColor] = useState(website?.page_content || '#FFFFFF')
   const [isSaving, setIsSaving] = useState(false)
   const saveWebsite = async (updates: Partial<Website>) => {
     if (!website) return
@@ -88,7 +90,9 @@ export const SiteProvider: React.FC<{
         isSaving,
         saveWebsite,
         saveBlockOrder,
-        deleteBlock
+        deleteBlock,
+        bgColor,
+        setBgColor
       }}
     >
       {children}

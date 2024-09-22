@@ -2,27 +2,47 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Image as ImageIcon, UserCircle } from 'lucide-react'
 import React, { useState } from 'react'
 
+import { Block } from '@/types'
 import { Button } from '@/components/ui/button'
 import { TooltipComponent } from './TooltipComponent'
+import { useSite } from '@/contexts/SiteContext'
 
 interface ImageAvatarToggleBlockProps {
   imageSrc: string
   userName: string
+  editable: boolean
+  block: Block
 }
 
 const ImageAvatarToggleBlock: React.FC<ImageAvatarToggleBlockProps> = ({
   imageSrc,
-  userName
+  userName,
+  editable,
+  block
 }) => {
-  const [showAvatar, setShowAvatar] = useState(true)
+  const [showAvatar, setShowAvatar] = useState(!block.fullSizedImage)
   const [isHovered, setIsHovered] = useState(false)
-
+  const { website, saveWebsite } = useSite()
   const handleShowAvatar = () => {
     setShowAvatar(true)
+    const updatedBlocks = website!.blocks.map((b) => {
+      if (b.i === block.i) {
+        return { ...b, fullSizedImage: false }
+      }
+      return b
+    })
+    saveWebsite({ blocks: updatedBlocks })
   }
 
   const handleShowImage = () => {
     setShowAvatar(false)
+    const updatedBlocks = website!.blocks.map((b) => {
+      if (b.i === block.i) {
+        return { ...b, fullSizedImage: true }
+      }
+      return b
+    })
+    saveWebsite({ blocks: updatedBlocks })
   }
 
   return (
@@ -43,7 +63,7 @@ const ImageAvatarToggleBlock: React.FC<ImageAvatarToggleBlockProps> = ({
           className='w-full h-full object-cover rounded-2xl pointer-events-none select-none'
         />
       )}
-      {isHovered && (
+      {isHovered && editable && (
         <div className='flex justify-center space-x-2 absolute bottom-4'>
           <TooltipComponent label='Show Avatar'>
             <Button onClick={handleShowAvatar} variant='outline'>
