@@ -1,8 +1,9 @@
 'use client'
 
+import { Block as BlockType, User } from '@/types'
+
 import { FloatingBottomBar } from '@/components/FloatingBottomBar'
 import GridLayout from './GridLayout'
-import { User } from '@/types'
 import { useSite } from '@/contexts/SiteContext'
 import { useState } from 'react'
 
@@ -14,36 +15,57 @@ export function CVBuilderLayout({
   isOwnProfile: boolean
   onSave: (field: string, value: string) => void
 }) {
-  const { website } = useSite()
+  const { website, saveWebsite } = useSite()
   const [blocks, setBlocks] = useState(website!.blocks)
   console.log({ website })
   const handleAddBlock = () => {
+    const newBlockId = `block-${blocks.length}`
+    const nextPosition = calculateNextPosition(blocks)
     const newBlock = {
-      i: `block-${blocks.length}`,
-      x: 0,
-      y: Infinity,
+      i: newBlockId,
+      x: nextPosition.x,
+      y: nextPosition.y,
       w: 1,
       h: 1,
-      isResizable: true
+      isResizable: true,
+      url: '',
+      title: ''
     }
     setBlocks([...blocks, newBlock])
-    // Update the website state with the new blocks
-
-    //saveWebsite({ blocks: [...website!.blocks, newBlock] })
+    saveWebsite({ blocks: [...website!.blocks, newBlock] })
   }
+
+  const calculateNextPosition = (blocks: BlockType[]) => {
+    const maxY = Math.max(...blocks.map((block) => block.y + block.h), 0)
+    const lastRowBlocks = blocks.filter((block) => block.y + block.h === maxY)
+    const maxXInLastRow = Math.max(
+      ...lastRowBlocks.map((block) => block.x + block.w),
+      0
+    )
+
+    if (maxXInLastRow + 1 <= 2) {
+      // Assuming a grid width of 3
+      return { x: maxXInLastRow, y: maxY - 1 }
+    } else {
+      return { x: 0, y: maxY }
+    }
+  }
+
   const HomeLayouts = {
     lg: website!.blocks,
     xs: website!.blocks.map((block) => ({ ...block, w: 1, h: 1 }))
   }
   return (
-    <div className='flex flex-1 flex-col md:flex-row h-screen overflow-hidden'>
+    <div className='flex flex-1 flex-col md:flex-row h-screen  overflow-y-scroll'>
       <GridLayout
         keys={blocks}
         user={user}
         website={website!}
         layout={HomeLayouts}
       />
-      {isOwnProfile && <FloatingBottomBar onAddBlock={handleAddBlock} />}
+      {isOwnProfile && (
+        <FloatingBottomBar onAddBlock={handleAddBlock} user={user} />
+      )}
     </div>
   )
 }

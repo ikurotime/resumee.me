@@ -2,36 +2,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block as BlockType, User, Website } from '@/types'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
 
+import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { useSite } from '@/contexts/SiteContext'
 
-interface GridLayoutProps {
-  keys: {
-    i: string
-    x: number
-    y: number
-    w: number
-    h: number
-    isResizable: boolean
-  }[]
-  user: User
-  website: Website
-  layout: {
-    lg: BlockType[]
-    xs: {
-      w: number
-      h: number
-      i: string
-      x: number
-      y: number
-      isResizable: boolean
-    }[]
-  }
-}
 interface BlockProps {
   keyProp: string
   user: User
   website: Website
+  url?: string
+  title?: string
+}
+interface GridLayoutProps {
+  keys: BlockType[]
+  user: User
+  website: Website
+  layout: {
+    lg: BlockType[]
+    xs: BlockType[]
+  }
 }
 
 function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
@@ -49,9 +38,34 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
 
     saveBlockOrder(newOrder)
   }
-
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 100,
+        damping: 15
+      }
+    }
+  }
   return (
-    <div className='w-[900px] m-auto flex justify-between b-10 relative'>
+    <motion.div
+      initial={{ y: -10 }}
+      animate={{ y: 0 }}
+      variants={containerVariants}
+      className='w-[900px] m-auto flex justify-between b-10 relative'
+    >
       <ResponsiveReactGridLayout
         className='m-auto w-[900px]'
         breakpoints={{ xl: 1200, lg: 899, md: 768, sm: 480, xs: 200 }}
@@ -61,23 +75,30 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
         onDragStop={onLayoutChange}
       >
         {keys.map((key) => (
-          <div
+          <motion.div
             key={key.i}
-            className='bg-[#f5f5f7] border flex justify-center items-center shadow-[inset_0_0_0_2px_rgba(0,0,0,0)] rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing'
+            variants={itemVariants}
+            className='bg-[#fff] shadow border flex justify-center items-center  rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing'
           >
-            <Block keyProp={key.i} user={user} website={website} />
-          </div>
+            <Block
+              keyProp={key.i}
+              user={user}
+              website={website}
+              url={key.url}
+              title={key.title}
+            />
+          </motion.div>
         ))}
       </ResponsiveReactGridLayout>
-    </div>
+    </motion.div>
   )
 }
 
-export function Block({ keyProp, user, website }: BlockProps) {
+export function Block({ keyProp, user, website, url, title }: BlockProps) {
   switch (keyProp) {
     case 'profile':
       return (
-        <div className='flex flex-col  items-center justify-center'>
+        <div className='flex flex-col items-center justify-center'>
           <Avatar className='w-48 h-48 mb-4'>
             <AvatarImage src={user.profile_picture} alt={user.name} />
             <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
@@ -90,6 +111,76 @@ export function Block({ keyProp, user, website }: BlockProps) {
         <div className='flex flex-col'>
           <h1 className='text-4xl font-bold mb-2'>{website.title}</h1>
           <p className='text-gray-600'>{website.description}</p>
+        </div>
+      )
+    case 'youtube':
+      return (
+        <div className='bg-red-600 text-white p-4 rounded-lg'>
+          <h3 className='text-xl font-bold mb-2'>{title || 'YouTube'}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-white hover:underline'
+          >
+            {url}
+          </a>
+        </div>
+      )
+    case 'twitch':
+      return (
+        <div className='bg-purple-600 text-white p-4 rounded-lg'>
+          <h3 className='text-xl font-bold mb-2'>{title || 'Twitch'}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-white hover:underline'
+          >
+            {url}
+          </a>
+        </div>
+      )
+    case 'github':
+      return (
+        <div className='bg-gray-800 text-white p-4 rounded-lg'>
+          <h3 className='text-xl font-bold mb-2'>{title || 'GitHub'}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-white hover:underline'
+          >
+            {url}
+          </a>
+        </div>
+      )
+    case 'tiktok':
+      return (
+        <div className='bg-black text-white p-4 rounded-lg'>
+          <h3 className='text-xl font-bold mb-2'>{title || 'TikTok'}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-white hover:underline'
+          >
+            {url}
+          </a>
+        </div>
+      )
+    case 'instagram':
+      return (
+        <div className='bg-pink-600 text-white p-4 rounded-lg'>
+          <h3 className='text-xl font-bold mb-2'>{title || 'Instagram'}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='text-white hover:underline'
+          >
+            {url}
+          </a>
         </div>
       )
     default:

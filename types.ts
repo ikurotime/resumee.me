@@ -57,6 +57,8 @@ interface Block {
   w: number
   h: number
   isResizable: boolean
+  url?: string
+  title?: string
 }
 
 // Technology related types

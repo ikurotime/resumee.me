@@ -12,6 +12,7 @@ import { User, Website } from '@/types'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { TooltipComponent } from './TooltipComponent'
 import { updateWebsiteSlug } from '@/actions/websites'
 import { useState } from 'react'
 
@@ -112,11 +113,13 @@ export function WebMenu({ website }: { user: User | null; website: Website }) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon'>
-          <Settings className='h-4 w-4 text-gray-500' />
-        </Button>
-      </DropdownMenuTrigger>
+      <TooltipComponent label='Settings'>
+        <DropdownMenuTrigger asChild>
+          <Button variant='ghost' size='icon'>
+            <Settings className='h-6 w-6 ' />
+          </Button>
+        </DropdownMenuTrigger>
+      </TooltipComponent>
       <DropdownMenuContent className='min-w-56'>
         <ExpandableMenuItem
           icon={<Github className='h-5 w-5' />}

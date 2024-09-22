@@ -87,7 +87,7 @@ export default function Component() {
   }
 
   return (
-    <div className='min-h-screen bg-white overflow-hidden'>
+    <div className='min-h-screen bg-white '>
       <main className='space-y-20 '>
         <AnimatedSection id='hero'>
           <div className='container mx-auto'>

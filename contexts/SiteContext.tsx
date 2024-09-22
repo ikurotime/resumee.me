@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useCallback, useContext, useState } from 'react'
 
 import { Website } from '@/types'
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,7 +8,7 @@ interface SiteContextType {
   website: Website | null
   isSaving: boolean
   setWebsite: (website: Website) => void
-  //saveWebsite: (updates: Partial<Website>) => Promise<void>
+  saveWebsite: (updates: Partial<Website>) => Promise<void>
   saveBlockOrder: (
     newOrder: { i: string; x: number; y: number }[]
   ) => Promise<void>
@@ -23,22 +23,22 @@ export const SiteProvider: React.FC<{
   const [website, setWebsite] = useState<Website | null>(initialWebsite)
 
   const [isSaving, setIsSaving] = useState(false)
-  // const saveWebsite = useCallback(
-  //   async (updates: Partial<Website>) => {
-  //     if (!website) return
-  //     setIsSaving(true)
-  //     try {
-  //       if (!website.id) return
-  //       const updatedWebsite = await updateWebsite(website.id, updates)
-  //       setWebsite(updatedWebsite)
-  //     } catch (error) {
-  //       console.error('Error saving website:', error)
-  //     } finally {
-  //       setIsSaving(false)
-  //     }
-  //   },
-  //   [website]
-  // )
+  const saveWebsite = useCallback(
+    async (updates: Partial<Website>) => {
+      if (!website) return
+      setIsSaving(true)
+      try {
+        if (!website.id) return
+        const updatedWebsite = await updateWebsite(website.id, updates)
+        setWebsite(updatedWebsite)
+      } catch (error) {
+        console.error('Error saving website:', error)
+      } finally {
+        setIsSaving(false)
+      }
+    },
+    [website]
+  )
   const saveBlockOrder = async (
     newOrder: { i: string; x: number; y: number }[]
   ) => {
@@ -70,7 +70,7 @@ export const SiteProvider: React.FC<{
         website,
         isSaving,
         setWebsite,
-        //saveWebsite,
+        saveWebsite,
         saveBlockOrder
       }}
     >
