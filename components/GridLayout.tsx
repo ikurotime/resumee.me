@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { BlockProps, GridLayoutProps } from '@/types'
 import { Grip, SquareArrowOutUpRightIcon } from 'lucide-react'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
 import { useMemo, useState } from 'react'
 
 import { EditableField } from '@/components/EditableField'
+import ImageAvatarToggleBlock from './ImageAvatarToggleBlock'
 import { motion } from 'framer-motion'
 import { useSite } from '@/contexts/SiteContext'
 
@@ -228,17 +228,10 @@ export function Block({ block, user }: BlockProps) {
     switch (type) {
       case 'profile':
         return (
-          <div className='flex flex-col items-center justify-center'>
-            <Avatar className='w-48 h-48 mb-4'>
-              <AvatarImage
-                src={user.profile_picture}
-                className='pointer-events-none select-none'
-                alt={user.name}
-              />
-              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h2 className='text-2xl font-bold'>{user.name}</h2>
-          </div>
+          <ImageAvatarToggleBlock
+            imageSrc={user?.profile_picture || ''}
+            userName={user.name || 'User'}
+          />
         )
       case 'info':
         return (
@@ -262,10 +255,9 @@ export function Block({ block, user }: BlockProps) {
       case 'image':
         return (
           <div className='w-full h-full overflow-hidden flex'>
-            <img
-              src={block.imageUrl}
-              alt={'Uploaded image'}
-              className='w-full h-full object-cover rounded-2xl pointer-events-none select-none'
+            <ImageAvatarToggleBlock
+              imageSrc={block.imageUrl || ''}
+              userName={'Image'}
             />
           </div>
         )
