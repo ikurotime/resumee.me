@@ -50,8 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     websiteName: string
   ) => {
     const { data, error } = await supabase.auth.signUp({ email, password })
-    console.log('data', data)
-    console.log('error', error)
+
     if (error) throw error
     if (data && data.user) {
       createWebsite({

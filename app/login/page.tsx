@@ -18,7 +18,6 @@ export default function LoginPage() {
     try {
       const { user } = await signIn(email, password)
       const website = await getWebsiteByUserId(user.id)
-      console.log('website', website)
       router.push(`/${website.page_slug}`)
     } catch (error) {
       console.error(error)

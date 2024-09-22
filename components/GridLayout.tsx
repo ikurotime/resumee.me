@@ -1,9 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Responsive, WidthProvider } from 'react-grid-layout'
-import { User, Website } from '@/types'
+import { Block as BlockType, User, Website } from '@/types'
+import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
 
-import { HomeLayouts } from './GridLayoutHelper'
 import { useMemo } from 'react'
+import { useSite } from '@/contexts/SiteContext'
 
 interface GridLayoutProps {
   keys: {
@@ -16,6 +16,17 @@ interface GridLayoutProps {
   }[]
   user: User
   website: Website
+  layout: {
+    lg: BlockType[]
+    xs: {
+      w: number
+      h: number
+      i: string
+      x: number
+      y: number
+      isResizable: boolean
+    }[]
+  }
 }
 interface BlockProps {
   keyProp: string
@@ -23,8 +34,21 @@ interface BlockProps {
   website: Website
 }
 
-function GridLayout({ keys, user, website }: GridLayoutProps) {
+function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
   const ResponsiveReactGridLayout = useMemo(() => WidthProvider(Responsive), [])
+  const { saveBlockOrder } = useSite()
+
+  const onLayoutChange = (layout: Layout[]) => {
+    const newOrder = layout.map((item) => ({
+      i: item.i,
+      x: item.x,
+      y: item.y,
+      w: item.w,
+      h: item.h
+    }))
+
+    saveBlockOrder(newOrder)
+  }
 
   return (
     <div className='w-[900px] m-auto flex justify-between b-10 relative'>
@@ -33,7 +57,8 @@ function GridLayout({ keys, user, website }: GridLayoutProps) {
         breakpoints={{ xl: 1200, lg: 899, md: 768, sm: 480, xs: 200 }}
         cols={{ xl: 3, lg: 3, md: 2, sm: 1, xs: 1 }}
         rowHeight={300}
-        layouts={HomeLayouts}
+        layouts={layout}
+        onDragStop={onLayoutChange}
       >
         {keys.map((key) => (
           <div

@@ -14,9 +14,9 @@ export function CVBuilderLayout({
   isOwnProfile: boolean
   onSave: (field: string, value: string) => void
 }) {
-  const { website, saveWebsite } = useSite()
+  const { website } = useSite()
   const [blocks, setBlocks] = useState(website!.blocks)
-
+  console.log({ website })
   const handleAddBlock = () => {
     const newBlock = {
       i: `block-${blocks.length}`,
@@ -27,12 +27,22 @@ export function CVBuilderLayout({
       isResizable: true
     }
     setBlocks([...blocks, newBlock])
-    saveWebsite({ blocks: [...website!.blocks, newBlock] })
-  }
+    // Update the website state with the new blocks
 
+    //saveWebsite({ blocks: [...website!.blocks, newBlock] })
+  }
+  const HomeLayouts = {
+    lg: website!.blocks,
+    xs: website!.blocks.map((block) => ({ ...block, w: 1, h: 1 }))
+  }
   return (
     <div className='flex flex-1 flex-col md:flex-row h-screen overflow-hidden'>
-      <GridLayout keys={blocks} user={user} website={website!} />
+      <GridLayout
+        keys={blocks}
+        user={user}
+        website={website!}
+        layout={HomeLayouts}
+      />
       {isOwnProfile && <FloatingBottomBar onAddBlock={handleAddBlock} />}
     </div>
   )

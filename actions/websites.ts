@@ -145,10 +145,10 @@ export async function updateWebsite(
 }
 
 export async function updatePassword(websiteId: string, password: string) {
-  const { data, error } = await supabase.auth.updateUser({
+  const { error } = await supabase.auth.updateUser({
     password
   })
-  console.log(data, error)
+
   if (error) throw error
 }
 

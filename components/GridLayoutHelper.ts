@@ -17,15 +17,7 @@ export const keys = [
   'p',
   'q'
 ]
-export const initialBlocks = [
-  { i: 'profile', x: 0, y: 0, w: 1, h: 1, isResizable: false },
-  { i: 'info', x: 1, y: 0, w: 2, h: 1, isResizable: false }
-]
 
-export const HomeLayouts = {
-  lg: initialBlocks,
-  xs: initialBlocks.map((block) => ({ ...block, w: 1, h: 1 }))
-}
 // export const HomeLayouts = {
 //   lg: [
 //     { i: 'a', x: 0, y: 0, w: 2, h: 2, isResizable: false },
