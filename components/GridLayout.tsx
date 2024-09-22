@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block as BlockType, User, Website } from '@/types'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
 
-import { ImageUpload } from './ImageUpload'
+import { SquareArrowOutUpRightIcon } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { useSite } from '@/contexts/SiteContext'
@@ -119,17 +119,59 @@ function GridLayout({ blocks, user, website, layout }: GridLayoutProps) {
 }
 
 export function Block({ block, user, website }: BlockProps) {
-  const { saveWebsite } = useSite()
-  const handleImageUpload = (uploadedUrl: string) => {
-    saveWebsite({
-      blocks: website.blocks.map((block) =>
-        block.i === block.i ? { ...block, imageUrl: uploadedUrl } : block
-      )
-    })
+  const socialCardStyles = {
+    youtube: { bgColor: 'bg-red-600', title: 'YouTube' },
+    twitch: { bgColor: 'bg-purple-600', title: 'Twitch' },
+    github: { bgColor: 'bg-gray-800', title: 'GitHub' },
+    tiktok: { bgColor: 'bg-black', title: 'TikTok' },
+    instagram: { bgColor: 'bg-pink-600', title: 'Instagram' },
+    twitter: { bgColor: 'bg-blue-400', title: 'Twitter' },
+    linkedin: { bgColor: 'bg-blue-700', title: 'LinkedIn' },
+    facebook: { bgColor: 'bg-blue-600', title: 'Facebook' },
+    pinterest: { bgColor: 'bg-red-700', title: 'Pinterest' },
+    snapchat: { bgColor: 'bg-yellow-400', title: 'Snapchat' },
+    reddit: { bgColor: 'bg-orange-600', title: 'Reddit' },
+    tumblr: { bgColor: 'bg-blue-800', title: 'Tumblr' },
+    whatsapp: { bgColor: 'bg-green-500', title: 'WhatsApp' },
+    telegram: { bgColor: 'bg-blue-500', title: 'Telegram' },
+    medium: { bgColor: 'bg-black', title: 'Medium' },
+    spotify: { bgColor: 'bg-green-600', title: 'Spotify' },
+    soundcloud: { bgColor: 'bg-orange-500', title: 'SoundCloud' },
+    behance: { bgColor: 'bg-blue-600', title: 'Behance' },
+    dribbble: { bgColor: 'bg-pink-500', title: 'Dribbble' },
+    vimeo: { bgColor: 'bg-blue-700', title: 'Vimeo' },
+    flickr: { bgColor: 'bg-pink-400', title: 'Flickr' },
+    deviantart: { bgColor: 'bg-green-800', title: 'DeviantArt' },
+    etsy: { bgColor: 'bg-orange-600', title: 'Etsy' },
+    patreon: { bgColor: 'bg-red-500', title: 'Patreon' },
+    discord: { bgColor: 'bg-indigo-600', title: 'Discord' }
   }
 
   const blockContent = () => {
-    switch (block.type) {
+    const { type, title, url } = block
+    const social = socialCardStyles[type]
+
+    if (social) {
+      return (
+        <div
+          className={`${social.bgColor} text-white p-4 rounded-lg flex h-full overflow-hidden w-full relative`}
+        >
+          <h3 className='text-xl font-bold mb-2'>{title || social.title}</h3>
+          <a
+            href={url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='bg-white rounded-full size-16 flex items-center justify-center bottom-5 left-5 absolute'
+          >
+            <SquareArrowOutUpRightIcon color='black' />
+          </a>
+        </div>
+      )
+    }
+
+    // Handle other block types or default case
+    switch (type) {
+      // Add cases for other block types here
       case 'profile':
         return (
           <div className='flex flex-col items-center justify-center'>
@@ -145,105 +187,6 @@ export function Block({ block, user, website }: BlockProps) {
           <div className='flex flex-col px-8'>
             <h1 className='text-4xl font-bold mb-2'>{website.title}</h1>
             <p className='text-gray-600'>{website.description}</p>
-          </div>
-        )
-      case 'youtube':
-        return (
-          <div className='bg-red-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>
-              {block.title || 'YouTube'}
-            </h3>
-            <a
-              href={block.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-white hover:underline'
-            >
-              {block.url}
-            </a>
-          </div>
-        )
-      case 'twitch':
-        return (
-          <div className='bg-purple-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>
-              {block.title || 'Twitch'}
-            </h3>
-            <a
-              href={block.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-white hover:underline'
-            >
-              {block.url}
-            </a>
-          </div>
-        )
-      case 'github':
-        return (
-          <div className='bg-gray-800 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>
-              {block.title || 'GitHub'}
-            </h3>
-            <a
-              href={block.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-white hover:underline'
-            >
-              {block.url}
-            </a>
-          </div>
-        )
-      case 'tiktok':
-        return (
-          <div className='bg-black text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>
-              {block.title || 'TikTok'}
-            </h3>
-            <a
-              href={block.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-white hover:underline'
-            >
-              {block.url}
-            </a>
-          </div>
-        )
-      case 'instagram':
-        return (
-          <div className='bg-pink-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>
-              {block.title || 'Instagram'}
-            </h3>
-            <a
-              href={block.url}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-white hover:underline'
-            >
-              {block.url}
-            </a>
-          </div>
-        )
-      case 'image':
-        return (
-          <div className='flex items-center justify-center w-full h-full overflow-hidden rounded-2xl'>
-            {block.imageUrl ? (
-              <div className='relative w-full h-full'>
-                <img
-                  src={block.imageUrl}
-                  alt='Uploaded'
-                  className='absolute inset-0 w-full h-full object-cover'
-                />
-              </div>
-            ) : (
-              <ImageUpload
-                onUploadComplete={handleImageUpload}
-                onCancel={() => {}}
-              />
-            )}
           </div>
         )
       default:
