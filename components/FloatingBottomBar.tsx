@@ -13,13 +13,22 @@ export function FloatingBottomBar({ onAddBlock }: FloatingBottomBarProps) {
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-      className='fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg p-2'
+      className='fixed flex bottom-4 left-1/2 border transform -translate-x-1/2 bg-white rounded-full shadow-lg gap-4 p-4'
     >
-      <Button onClick={() => {}} variant='ghost' size='icon' className='mr-2'>
-        <Share className='h-6 w-6' />
+      <Button
+        onClick={() => {}}
+        size='icon'
+        className='w-full flex gap-2 px-2 py-1'
+      >
+        <Share size={16} />
         <span>Share</span>
       </Button>
-      <Button onClick={onAddBlock} variant='ghost' size='icon'>
+      <Button
+        onClick={onAddBlock}
+        variant='ghost'
+        className='w-full'
+        size='icon'
+      >
         <Plus className='h-6 w-6' />
       </Button>
     </motion.div>

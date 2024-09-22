@@ -44,25 +44,6 @@ export async function checkWebsiteExists(
   return { exists: false }
 }
 
-export async function addBlock(formData: FormData) {
-  const websiteId = formData.get('websiteId') as string
-  const blockTypeId = formData.get('blockTypeId') as string
-
-  const { error } = await supabase.from('Blocks').insert({
-    website_id: websiteId,
-    block_type_id: blockTypeId,
-    x: 0,
-    y: 0,
-    width: 1,
-    height: 1,
-    order_index: 0,
-    content: {}
-  })
-
-  if (error) throw error
-
-  revalidatePath('/cv-builder')
-}
 export async function getWebsiteByUserId(userId: string) {
   const { data, error } = await supabase
     .from('websites')
@@ -108,17 +89,7 @@ export async function getWebsiteByPath(pagePath: string) {
       is_published,
       created_at,
       updated_at,
-      blocks (
-        id,
-        website_id,
-        block_type_id,
-        x,
-        y,
-        width,
-        height,
-        order_index,
-        content
-      )
+      blocks 
     `
     )
     .eq('page_slug', pagePath)
@@ -151,18 +122,6 @@ export async function createWebsite(website: Website) {
   }
 
   return data
-}
-
-export async function updateBlock(
-  blockId: string,
-  content: Record<string, any>
-) {
-  const { error } = await supabase
-    .from('blocks')
-    .update({ content })
-    .eq('id', blockId)
-
-  if (error) throw error
 }
 
 export async function updateWebsite(

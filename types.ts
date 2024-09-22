@@ -23,7 +23,7 @@ interface WebsiteTheme {
 
 // Website related types
 interface Website {
-  id: UUID
+  id?: UUID
   user_id: UUID
   theme_id?: UUID
   domain?: string
@@ -51,15 +51,12 @@ interface BlockType {
 
 // Block related types
 interface Block {
-  id: UUID
-  website_id: UUID
-  block_type_id: UUID
+  i: string
   x: number
   y: number
-  width: number
-  height: number
-  order_index: number
-  content?: Record<string, any>
+  w: number
+  h: number
+  isResizable: boolean
 }
 
 // Technology related types

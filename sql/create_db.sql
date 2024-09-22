@@ -161,3 +161,31 @@ CREATE INDEX idx_blocks_website_id ON Blocks(website_id);
 CREATE INDEX idx_usertechnologies_website_id ON UserTechnologies(website_id);
 CREATE INDEX idx_userprojects_website_id ON UserProjects(website_id);
 CREATE INDEX idx_socialnetworkintegrations_website_id ON SocialNetworkIntegrations(website_id);
+
+
+-- First, drop the Blocks table
+DROP TABLE IF EXISTS public.blocks;
+
+-- Next, add the blocks column to the Websites table
+ALTER TABLE public.websites
+ADD COLUMN blocks JSONB DEFAULT '[]'::jsonb;
+
+-- Add a check constraint to ensure the blocks array contains valid objects
+ALTER TABLE public.websites
+ADD CONSTRAINT valid_blocks CHECK (
+  jsonb_typeof(blocks) = 'array' AND
+  (
+    SELECT bool_and(
+      jsonb_typeof(block->'i') = 'string' AND
+      jsonb_typeof(block->'x') = 'number' AND
+      jsonb_typeof(block->'y') = 'number' AND
+      jsonb_typeof(block->'w') = 'number' AND
+      jsonb_typeof(block->'h') = 'number' AND
+      jsonb_typeof(block->'isResizable') = 'boolean'
+    )
+    FROM jsonb_array_elements(blocks) AS block
+  )
+);
+
+-- Create an index on the blocks column for better query performance
+CREATE INDEX idx_websites_blocks ON public.websites USING GIN (blocks);

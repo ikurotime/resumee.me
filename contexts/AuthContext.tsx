@@ -56,7 +56,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (data && data.user) {
       createWebsite({
         user_id: data.user.id,
-        page_name: websiteName
+        page_name: websiteName,
+        blocks: [
+          { i: 'profile', x: 0, y: 0, w: 1, h: 1, isResizable: false },
+          { i: 'info', x: 1, y: 0, w: 2, h: 1, isResizable: false }
+        ]
       })
     }
   }
