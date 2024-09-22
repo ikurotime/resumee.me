@@ -120,7 +120,6 @@ function GridLayout({ blocks, user, website, layout }: GridLayoutProps) {
 
 export function Block({ block, user, website }: BlockProps) {
   const { saveWebsite } = useSite()
-  console.log(block)
   const handleImageUpload = (uploadedUrl: string) => {
     saveWebsite({
       blocks: website.blocks.map((block) =>

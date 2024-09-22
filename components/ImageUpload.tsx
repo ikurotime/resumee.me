@@ -37,7 +37,6 @@ export function ImageUpload({ onUploadComplete, onCancel }: ImageUploadProps) {
       const { error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, file)
-      console.log(filePath)
       if (uploadError) {
         throw uploadError
       }

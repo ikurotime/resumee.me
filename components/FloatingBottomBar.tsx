@@ -59,7 +59,7 @@ export function FloatingBottomBar({
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-      className='fixed bottom-4 transform right-0 left-0 bg-white rounded-full shadow-lg mx-auto max-w-3xl w-full'
+      className='fixed bottom-4 transform right-0 left-0 bg-white rounded-full shadow-lg mx-auto max-w-3xl w-full border'
     >
       <div className='flex items-center justify-between px-4 py-2'>
         <div className='flex gap-4 items-center'>

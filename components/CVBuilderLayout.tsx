@@ -14,6 +14,7 @@ export function CVBuilder({
   isOwnProfile: boolean
 }) {
   const { website, saveWebsite } = useSite()
+  console.log(website)
 
   const createNewBlock = ({
     type,

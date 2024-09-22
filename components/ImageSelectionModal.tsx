@@ -36,7 +36,6 @@ export function ImageSelectionModal({
       )
 
       setImages(imageUrls)
-      console.log(imageUrls)
     }
     if (isOpen) {
       fetchImages()

@@ -54,7 +54,7 @@ function ExpandableMenuItem({
       <AnimatePresence>
         {isExpanded && (
           <motion.div
-            className='w-full p-2 flex'
+            className='w-full p-2 flex items-center'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
