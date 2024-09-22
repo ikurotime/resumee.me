@@ -5,7 +5,6 @@ import { Block as BlockType, User } from '@/types'
 import { FloatingBottomBar } from '@/components/FloatingBottomBar'
 import GridLayout from './GridLayout'
 import { useSite } from '@/contexts/SiteContext'
-import { useState } from 'react'
 
 export function CVBuilderLayout({
   user,
@@ -13,14 +12,11 @@ export function CVBuilderLayout({
 }: {
   user: User
   isOwnProfile: boolean
-  onSave: (field: string, value: string) => void
 }) {
   const { website, saveWebsite } = useSite()
-  const [blocks, setBlocks] = useState(website!.blocks)
-  console.log({ website })
   const handleAddBlock = () => {
-    const newBlockId = `block-${blocks.length}`
-    const nextPosition = calculateNextPosition(blocks)
+    const newBlockId = `block-${website!.blocks.length}`
+    const nextPosition = calculateNextPosition(website!.blocks)
     const newBlock = {
       i: newBlockId,
       x: nextPosition.x,
@@ -31,7 +27,6 @@ export function CVBuilderLayout({
       url: '',
       title: ''
     }
-    setBlocks([...blocks, newBlock])
     saveWebsite({ blocks: [...website!.blocks, newBlock] })
   }
 
@@ -58,7 +53,7 @@ export function CVBuilderLayout({
   return (
     <div className='flex flex-1 flex-col md:flex-row h-screen  overflow-y-scroll'>
       <GridLayout
-        keys={blocks}
+        keys={website!.blocks}
         user={user}
         website={website!}
         layout={HomeLayouts}

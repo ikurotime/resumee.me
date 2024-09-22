@@ -22,7 +22,34 @@ interface GridLayoutProps {
     xs: BlockType[]
   }
 }
+const DeleteButton = ({ id }: { id: string }) => {
+  const { deleteBlock } = useSite()
 
+  return (
+    <button
+      onClick={() => {
+        console.log('AAAAAA')
+        deleteBlock(id)
+      }}
+      className='absolute z-[9999] -top-3 -right-3 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors'
+    >
+      <svg
+        xmlns='http://www.w3.org/2000/svg'
+        width='16'
+        height='16'
+        viewBox='0 0 24 24'
+        fill='none'
+        stroke='currentColor'
+        strokeWidth='2'
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      >
+        <line x1='18' y1='6' x2='6' y2='18'></line>
+        <line x1='6' y1='6' x2='18' y2='18'></line>
+      </svg>
+    </button>
+  )
+}
 function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
   const ResponsiveReactGridLayout = useMemo(() => WidthProvider(Responsive), [])
   const { saveBlockOrder } = useSite()
@@ -59,6 +86,7 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
       }
     }
   }
+
   return (
     <motion.div
       initial={{ y: -10 }}
@@ -78,8 +106,9 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
           <motion.div
             key={key.i}
             variants={itemVariants}
-            className='bg-[#fff] shadow border flex justify-center items-center  rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing'
+            className='bg-[#fff] relative shadow border flex justify-center items-center  rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing'
           >
+            <DeleteButton id={key.i} />
             <Block
               keyProp={key.i}
               user={user}
@@ -95,96 +124,99 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
 }
 
 export function Block({ keyProp, user, website, url, title }: BlockProps) {
-  switch (keyProp) {
-    case 'profile':
-      return (
-        <div className='flex flex-col items-center justify-center'>
-          <Avatar className='w-48 h-48 mb-4'>
-            <AvatarImage src={user.profile_picture} alt={user.name} />
-            <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
-          </Avatar>
-          <h2 className='text-2xl font-bold'>{user.name}</h2>
-        </div>
-      )
-    case 'info':
-      return (
-        <div className='flex flex-col'>
-          <h1 className='text-4xl font-bold mb-2'>{website.title}</h1>
-          <p className='text-gray-600'>{website.description}</p>
-        </div>
-      )
-    case 'youtube':
-      return (
-        <div className='bg-red-600 text-white p-4 rounded-lg'>
-          <h3 className='text-xl font-bold mb-2'>{title || 'YouTube'}</h3>
-          <a
-            href={url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-white hover:underline'
-          >
-            {url}
-          </a>
-        </div>
-      )
-    case 'twitch':
-      return (
-        <div className='bg-purple-600 text-white p-4 rounded-lg'>
-          <h3 className='text-xl font-bold mb-2'>{title || 'Twitch'}</h3>
-          <a
-            href={url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-white hover:underline'
-          >
-            {url}
-          </a>
-        </div>
-      )
-    case 'github':
-      return (
-        <div className='bg-gray-800 text-white p-4 rounded-lg'>
-          <h3 className='text-xl font-bold mb-2'>{title || 'GitHub'}</h3>
-          <a
-            href={url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-white hover:underline'
-          >
-            {url}
-          </a>
-        </div>
-      )
-    case 'tiktok':
-      return (
-        <div className='bg-black text-white p-4 rounded-lg'>
-          <h3 className='text-xl font-bold mb-2'>{title || 'TikTok'}</h3>
-          <a
-            href={url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-white hover:underline'
-          >
-            {url}
-          </a>
-        </div>
-      )
-    case 'instagram':
-      return (
-        <div className='bg-pink-600 text-white p-4 rounded-lg'>
-          <h3 className='text-xl font-bold mb-2'>{title || 'Instagram'}</h3>
-          <a
-            href={url}
-            target='_blank'
-            rel='noopener noreferrer'
-            className='text-white hover:underline'
-          >
-            {url}
-          </a>
-        </div>
-      )
-    default:
-      return <div>Block: {keyProp}</div>
+  const blockContent = () => {
+    switch (keyProp) {
+      case 'profile':
+        return (
+          <div className='flex flex-col items-center justify-center'>
+            <Avatar className='w-48 h-48 mb-4'>
+              <AvatarImage src={user.profile_picture} alt={user.name} />
+              <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
+            </Avatar>
+            <h2 className='text-2xl font-bold'>{user.name}</h2>
+          </div>
+        )
+      case 'info':
+        return (
+          <div className='flex flex-col'>
+            <h1 className='text-4xl font-bold mb-2'>{website.title}</h1>
+            <p className='text-gray-600'>{website.description}</p>
+          </div>
+        )
+      case 'youtube':
+        return (
+          <div className='bg-red-600 text-white p-4 rounded-lg'>
+            <h3 className='text-xl font-bold mb-2'>{title || 'YouTube'}</h3>
+            <a
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white hover:underline'
+            >
+              {url}
+            </a>
+          </div>
+        )
+      case 'twitch':
+        return (
+          <div className='bg-purple-600 text-white p-4 rounded-lg'>
+            <h3 className='text-xl font-bold mb-2'>{title || 'Twitch'}</h3>
+            <a
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white hover:underline'
+            >
+              {url}
+            </a>
+          </div>
+        )
+      case 'github':
+        return (
+          <div className='bg-gray-800 text-white p-4 rounded-lg'>
+            <h3 className='text-xl font-bold mb-2'>{title || 'GitHub'}</h3>
+            <a
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white hover:underline'
+            >
+              {url}
+            </a>
+          </div>
+        )
+      case 'tiktok':
+        return (
+          <div className='bg-black text-white p-4 rounded-lg'>
+            <h3 className='text-xl font-bold mb-2'>{title || 'TikTok'}</h3>
+            <a
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white hover:underline'
+            >
+              {url}
+            </a>
+          </div>
+        )
+      case 'instagram':
+        return (
+          <div className='bg-pink-600 text-white p-4 rounded-lg'>
+            <h3 className='text-xl font-bold mb-2'>{title || 'Instagram'}</h3>
+            <a
+              href={url}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-white hover:underline'
+            >
+              {url}
+            </a>
+          </div>
+        )
+      default:
+        return <div>Block: {keyProp}</div>
+    }
   }
+  return <div className='relative'>{blockContent()}</div>
 }
 export default GridLayout
