@@ -53,6 +53,20 @@ function GridLayout({ blocks, user, website, layout }: GridLayoutProps) {
   const { saveBlockOrder } = useSite()
 
   const onLayoutChange = (layout: Layout[]) => {
+    // Check if the order has changed before saving
+    const hasOrderChanged = layout.some((item, index) => {
+      const originalBlock = blocks[index]
+      return (
+        item.x !== originalBlock.x ||
+        item.y !== originalBlock.y ||
+        item.w !== originalBlock.w ||
+        item.h !== originalBlock.h
+      )
+    })
+
+    if (!hasOrderChanged) {
+      return // Exit the function if no changes detected
+    }
     const newOrder = layout.map((item) => ({
       i: item.i,
       x: item.x,
@@ -149,7 +163,7 @@ export function Block({ block, user, website }: BlockProps) {
 
   const blockContent = () => {
     const { type, title, url } = block
-    const social = socialCardStyles[type]
+    const social = socialCardStyles[type as keyof typeof socialCardStyles]
 
     if (social) {
       return (
