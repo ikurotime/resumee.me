@@ -58,6 +58,7 @@ interface Block {
   url?: string
   title?: string
   type?: string
+  content?: string
   imageUrl?: string
 }
 

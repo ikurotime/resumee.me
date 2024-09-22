@@ -2,9 +2,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { BlockProps, GridLayoutProps } from '@/types'
 import { Grip, SquareArrowOutUpRightIcon } from 'lucide-react'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
+import { useMemo, useState } from 'react'
 
+import { EditableField } from '@/components/EditableField'
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
 import { useSite } from '@/contexts/SiteContext'
 
 const DeleteButton = ({ id }: { id: string }) => {
@@ -158,9 +159,49 @@ function GridLayout({ user }: GridLayoutProps) {
 }
 
 export function Block({ block, user }: BlockProps) {
-  const { website } = useSite()
+  const { website, saveWebsite } = useSite()
+  const [newTitle, setNewTitle] = useState(website?.title || 'Your name')
+  const [description, setDescription] = useState(
+    website?.description || 'Edit me!'
+  )
+  const [noteTitle, setNoteTitle] = useState(block.title || '') // State for note content
+  const [noteContent, setNoteContent] = useState(block.content || '') // State for note content
+
+  const handleTitleSave = (titleToSave: string) => {
+    setNewTitle(titleToSave)
+    saveWebsite({ title: titleToSave })
+  }
+
+  const handleDescriptionSave = (newDescription: string) => {
+    setDescription(newDescription)
+    saveWebsite({ description: newDescription })
+  }
+
+  const handleNoteTitleSave = (newNoteTitle: string) => {
+    // Update the specific block's content
+    setNoteTitle(newNoteTitle)
+    const updatedBlocks = website!.blocks.map((b) => {
+      if (b.i === block.i) {
+        return { ...b, title: newNoteTitle } // Update the content of the modified block
+      }
+      return b
+    })
+    saveWebsite({ blocks: updatedBlocks }) // Save the updated blocks
+  }
+
+  const handleNoteContentSave = (newNoteContent: string) => {
+    // Update the specific block's content
+    setNoteContent(newNoteContent)
+    const updatedBlocks = website!.blocks.map((b) => {
+      if (b.i === block.i) {
+        return { ...b, content: newNoteContent } // Update the content of the modified block
+      }
+      return b
+    })
+    saveWebsite({ blocks: updatedBlocks }) // Save the updated blocks
+  }
   const blockContent = () => {
-    const { type, title, url } = block
+    const { type, title } = block
     const social = SOCIAL_CARD_STYLES[type as keyof typeof SOCIAL_CARD_STYLES]
 
     if (social) {
@@ -170,7 +211,7 @@ export function Block({ block, user }: BlockProps) {
         >
           <h3 className='text-xl font-bold mb-2'>{title || social.title}</h3>
           <a
-            href={url}
+            href={block.url}
             target='_blank'
             rel='noopener noreferrer'
             className='bg-white rounded-full size-16 flex items-center justify-center bottom-5 left-5 absolute'
@@ -181,9 +222,7 @@ export function Block({ block, user }: BlockProps) {
       )
     }
 
-    // Handle other block types or default case
     switch (type) {
-      // Add cases for other block types here
       case 'profile':
         return (
           <div className='flex flex-col items-center justify-center'>
@@ -200,9 +239,21 @@ export function Block({ block, user }: BlockProps) {
         )
       case 'info':
         return (
-          <div className='flex flex-col px-8'>
-            <h1 className='text-4xl font-bold mb-2'>{website?.title}</h1>
-            <p className='text-gray-600'>{website?.description}</p>
+          <div className='flex flex-col px-8 w-full'>
+            <EditableField
+              value={newTitle}
+              onSave={handleTitleSave}
+              isEditable={true}
+              className='text-4xl font-bold mb-2 cursor-text'
+              type='text'
+            />
+            <EditableField
+              value={description}
+              onSave={handleDescriptionSave}
+              isEditable={true}
+              className='text-gray-600 cursor-text flex w-full'
+              type='textarea'
+            />
           </div>
         )
       case 'image':
@@ -210,8 +261,27 @@ export function Block({ block, user }: BlockProps) {
           <div className='w-full h-full overflow-hidden flex'>
             <img
               src={block.imageUrl}
-              alt={block.title || 'Uploaded image'}
+              alt={'Uploaded image'}
               className='w-full h-full object-cover rounded-2xl pointer-events-none select-none'
+            />
+          </div>
+        )
+      case 'note':
+        return (
+          <div className='w-full h-full overflow-hidden flex flex-col p-5'>
+            <EditableField
+              value={noteTitle || 'New note'}
+              onSave={handleNoteTitleSave} // Save the note content
+              isEditable={true}
+              className='text-gray-600 cursor-text flex w-full font-bold text-xl'
+              type='text'
+            />
+            <EditableField
+              value={noteContent || 'Edit me! '}
+              onSave={handleNoteContentSave} // Save the note content
+              isEditable={true}
+              className='text-gray-600 cursor-text flex w-full text-base h-full resize-none'
+              type='textarea'
             />
           </div>
         )
@@ -219,6 +289,7 @@ export function Block({ block, user }: BlockProps) {
         return <div>Block: {block.i}</div>
     }
   }
+
   return blockContent()
 }
 

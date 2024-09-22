@@ -34,7 +34,6 @@ export function EditableField({
   return type === 'text' ? (
     <input
       type={type}
-      defaultValue={value}
       value={editedValue}
       onChange={(e) => setEditedValue(e.target.value)}
       onBlur={handleSave}
@@ -43,7 +42,6 @@ export function EditableField({
     />
   ) : (
     <textarea
-      defaultValue={value}
       value={editedValue}
       onChange={(e) => setEditedValue(e.target.value)}
       onBlur={handleSave}
