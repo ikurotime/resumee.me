@@ -1,22 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block as BlockType, User, Website } from '@/types'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
-import { useMemo, useState } from 'react'
 
 import { ImageUpload } from './ImageUpload'
 import { motion } from 'framer-motion'
+import { useMemo } from 'react'
 import { useSite } from '@/contexts/SiteContext'
 
 interface BlockProps {
-  keyProp: string
+  block: BlockType
   user: User
   website: Website
-  url?: string
-  title?: string
-  type?: string
 }
 interface GridLayoutProps {
-  keys: BlockType[]
+  blocks: BlockType[]
   user: User
   website: Website
   layout: {
@@ -51,7 +48,7 @@ const DeleteButton = ({ id }: { id: string }) => {
     </button>
   )
 }
-function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
+function GridLayout({ blocks, user, website, layout }: GridLayoutProps) {
   const ResponsiveReactGridLayout = useMemo(() => WidthProvider(Responsive), [])
   const { saveBlockOrder } = useSite()
 
@@ -103,23 +100,17 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
         layouts={layout}
         onDragStop={onLayoutChange}
       >
-        {keys.map((key) => (
+        {blocks.map((block) => (
           <motion.div
-            key={key.i}
+            key={block.i}
             variants={itemVariants}
-            className='bg-[#fff] relative shadow border flex justify-center items-center rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing group'
+            className='bg-[#fff]  relative shadow border flex justify-center items-center rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing group'
           >
             <div className='absolute z-[9999] -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity'>
-              <DeleteButton id={key.i} />
+              <DeleteButton id={block.i} />
             </div>
-            <Block
-              keyProp={key.i}
-              user={user}
-              website={website}
-              url={key.url}
-              title={key.title}
-              type={key.type}
-            />
+
+            <Block block={block} user={user} website={website} />
           </motion.div>
         ))}
       </ResponsiveReactGridLayout>
@@ -127,28 +118,19 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
   )
 }
 
-export function Block({
-  keyProp,
-  user,
-  website,
-  url,
-  title,
-  type
-}: BlockProps) {
+export function Block({ block, user, website }: BlockProps) {
   const { saveWebsite } = useSite()
-  const [imageUrl, setImageUrl] = useState(url)
-
+  console.log(block)
   const handleImageUpload = (uploadedUrl: string) => {
-    setImageUrl(uploadedUrl)
     saveWebsite({
       blocks: website.blocks.map((block) =>
-        block.i === keyProp ? { ...block, url: uploadedUrl } : block
+        block.i === block.i ? { ...block, imageUrl: uploadedUrl } : block
       )
     })
   }
 
   const blockContent = () => {
-    switch (type) {
+    switch (block.type) {
       case 'profile':
         return (
           <div className='flex flex-col items-center justify-center'>
@@ -169,91 +151,106 @@ export function Block({
       case 'youtube':
         return (
           <div className='bg-red-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>{title || 'YouTube'}</h3>
+            <h3 className='text-xl font-bold mb-2'>
+              {block.title || 'YouTube'}
+            </h3>
             <a
-              href={url}
+              href={block.url}
               target='_blank'
               rel='noopener noreferrer'
               className='text-white hover:underline'
             >
-              {url}
+              {block.url}
             </a>
           </div>
         )
       case 'twitch':
         return (
           <div className='bg-purple-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>{title || 'Twitch'}</h3>
+            <h3 className='text-xl font-bold mb-2'>
+              {block.title || 'Twitch'}
+            </h3>
             <a
-              href={url}
+              href={block.url}
               target='_blank'
               rel='noopener noreferrer'
               className='text-white hover:underline'
             >
-              {url}
+              {block.url}
             </a>
           </div>
         )
       case 'github':
         return (
           <div className='bg-gray-800 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>{title || 'GitHub'}</h3>
+            <h3 className='text-xl font-bold mb-2'>
+              {block.title || 'GitHub'}
+            </h3>
             <a
-              href={url}
+              href={block.url}
               target='_blank'
               rel='noopener noreferrer'
               className='text-white hover:underline'
             >
-              {url}
+              {block.url}
             </a>
           </div>
         )
       case 'tiktok':
         return (
           <div className='bg-black text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>{title || 'TikTok'}</h3>
+            <h3 className='text-xl font-bold mb-2'>
+              {block.title || 'TikTok'}
+            </h3>
             <a
-              href={url}
+              href={block.url}
               target='_blank'
               rel='noopener noreferrer'
               className='text-white hover:underline'
             >
-              {url}
+              {block.url}
             </a>
           </div>
         )
       case 'instagram':
         return (
           <div className='bg-pink-600 text-white p-4 rounded-lg'>
-            <h3 className='text-xl font-bold mb-2'>{title || 'Instagram'}</h3>
+            <h3 className='text-xl font-bold mb-2'>
+              {block.title || 'Instagram'}
+            </h3>
             <a
-              href={url}
+              href={block.url}
               target='_blank'
               rel='noopener noreferrer'
               className='text-white hover:underline'
             >
-              {url}
+              {block.url}
             </a>
           </div>
         )
       case 'image':
         return (
-          <div className='flex flex-col items-center justify-center'>
-            {imageUrl ? (
-              <img
-                src={imageUrl}
-                alt='Uploaded'
-                className='max-w-full max-h-full object-contain'
-              />
+          <div className='flex items-center justify-center w-full h-full overflow-hidden rounded-2xl'>
+            {block.imageUrl ? (
+              <div className='relative w-full h-full'>
+                <img
+                  src={block.imageUrl}
+                  alt='Uploaded'
+                  className='absolute inset-0 w-full h-full object-cover'
+                />
+              </div>
             ) : (
-              <ImageUpload onUploadComplete={handleImageUpload} />
+              <ImageUpload
+                onUploadComplete={handleImageUpload}
+                onCancel={() => {}}
+              />
             )}
           </div>
         )
       default:
-        return <div>Block: {keyProp}</div>
+        return <div>Block: {block.i}</div>
     }
   }
-  return <div className='relative'>{blockContent()}</div>
+  return blockContent()
 }
 export default GridLayout

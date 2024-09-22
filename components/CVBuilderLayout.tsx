@@ -15,11 +15,17 @@ export function CVBuilder({
 }) {
   const { website, saveWebsite } = useSite()
 
-  const createNewBlock = (
-    type: string,
-    size: { w: number; h: number },
+  const createNewBlock = ({
+    type,
+    size,
+    url,
+    imageUrl
+  }: {
+    type: string
+    size: { w: number; h: number }
     url?: string
-  ) => {
+    imageUrl?: string
+  }) => {
     const newBlockId = `${website!.blocks.length}`
     const nextPosition = calculateNextPosition(website!.blocks)
     const newBlock = {
@@ -31,17 +37,22 @@ export function CVBuilder({
       isResizable: true,
       url: url,
       title: '',
-      type: type
+      type: type,
+      imageUrl: imageUrl
     }
     saveWebsite({ blocks: [...website!.blocks, newBlock] })
   }
 
-  const handleAddProfileBlock = () => createNewBlock('profile', { w: 1, h: 1 })
-  const handleAddDescriptionBlock = () => createNewBlock('info', { w: 2, h: 1 })
+  const handleAddProfileBlock = () =>
+    createNewBlock({ type: 'profile', size: { w: 1, h: 1 } })
+  const handleAddDescriptionBlock = () =>
+    createNewBlock({ type: 'info', size: { w: 2, h: 1 } })
   const handleAddLinkBlock = (url: string, type: string) =>
-    createNewBlock(type, { w: 1, h: 1 }, url)
-  const handleAddImageBlock = () => createNewBlock('image', { w: 1, h: 1 })
-  const handleAddNoteBlock = () => createNewBlock('note', { w: 1, h: 1 })
+    createNewBlock({ type, size: { w: 1, h: 1 }, url })
+  const handleAddImageBlock = (imageUrl: string) =>
+    createNewBlock({ type: 'image', size: { w: 1, h: 1 }, imageUrl })
+  const handleAddNoteBlock = () =>
+    createNewBlock({ type: 'note', size: { w: 1, h: 1 } })
 
   const calculateNextPosition = (blocks: BlockType[]) => {
     const maxY = Math.max(...blocks.map((block) => block.y + block.h), 0)
@@ -66,7 +77,7 @@ export function CVBuilder({
   return (
     <div className='flex flex-1 flex-col md:flex-row h-screen  overflow-y-scroll'>
       <GridLayout
-        keys={website!.blocks}
+        blocks={website!.blocks}
         user={user}
         website={website!}
         layout={HomeLayouts}

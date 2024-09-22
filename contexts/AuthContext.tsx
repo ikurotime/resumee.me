@@ -64,7 +64,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             w: 1,
             h: 1,
             isResizable: false,
-            type: 'profile'
+            url: '',
+            type: 'profile',
+            imageUrl: ''
           },
           {
             i: 'info',
@@ -73,7 +75,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             w: 2,
             h: 1,
             isResizable: false,
-            type: 'info'
+            url: '',
+            type: 'info',
+            imageUrl: ''
           }
         ]
       })

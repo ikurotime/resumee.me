@@ -60,6 +60,7 @@ interface Block {
   url?: string
   title?: string
   type?: string
+  imageUrl?: string
 }
 
 // Technology related types

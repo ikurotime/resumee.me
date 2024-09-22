@@ -1,3 +1,5 @@
+'use client'
+
 import {
   Image as ImageIcon,
   Link,
@@ -10,6 +12,7 @@ import {
 
 import { AnimatedLinkInput } from './AnimatedLinkInput'
 import { Button } from '@/components/ui/button'
+import { ImageUpload } from './ImageUpload'
 import { TooltipComponent } from './TooltipComponent'
 import { User as UserType } from '@/types'
 import { WebMenu } from './WebMenu'
@@ -21,7 +24,7 @@ interface FloatingBottomBarProps {
   onAddProfileBlock: () => void
   onAddDescriptionBlock: () => void
   onAddLinkBlock: (url: string, type: string) => void
-  onAddImageBlock: () => void
+  onAddImageBlock: (url: string) => void
   onAddNoteBlock: () => void
   user: UserType
 }
@@ -37,12 +40,18 @@ export function FloatingBottomBar({
   const handleShare = async () => {}
   const { isSaving, website } = useSite()
   const [showLinkInput, setShowLinkInput] = useState(false)
+  const [showImageUpload, setShowImageUpload] = useState(false)
 
   const handleAddLink = (url: string) => {
     const domain = new URL(url).hostname.replace('www.', '')
     const type = domain.split('.')[0]
     onAddLinkBlock(url, type)
     setShowLinkInput(false)
+  }
+
+  const handleAddImage = (url: string) => {
+    onAddImageBlock(url)
+    setShowImageUpload(false)
   }
 
   return (
@@ -120,14 +129,22 @@ export function FloatingBottomBar({
           </TooltipComponent>
 
           <TooltipComponent label='Image'>
-            <Button
-              onClick={onAddImageBlock}
-              variant='ghost'
-              size='icon'
-              className='w-10 h-10'
-            >
-              <ImageIcon className='h-6 w-6' />
-            </Button>
+            <div className='relative'>
+              <Button
+                onClick={() => setShowImageUpload(true)}
+                variant='ghost'
+                size='icon'
+                className='w-10 h-10'
+              >
+                <ImageIcon className='h-6 w-6' />
+              </Button>
+              {showImageUpload && (
+                <ImageUpload
+                  onUploadComplete={handleAddImage}
+                  onCancel={() => setShowImageUpload(false)}
+                />
+              )}
+            </div>
           </TooltipComponent>
           <TooltipComponent label='New Note'>
             <Button
