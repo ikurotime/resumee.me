@@ -2,7 +2,7 @@
 
 import { User, Website } from '@/types'
 
-import { CVBuilderLayout } from './CVBuilderLayout'
+import { CVBuilder } from './CVBuilderLayout'
 import { ClientWrapper } from './ClientWrapper'
 import { SiteProvider } from '@/contexts/SiteContext'
 import { useAuth } from '@/contexts/AuthContext'
@@ -20,7 +20,7 @@ export function CVBuilderClient({
   return (
     <ClientWrapper>
       <SiteProvider initialWebsite={initialWebsite}>
-        <CVBuilderLayout user={initialUser} isOwnProfile={isOwnProfile} />
+        <CVBuilder user={initialUser} isOwnProfile={isOwnProfile} />
       </SiteProvider>
     </ClientWrapper>
   )

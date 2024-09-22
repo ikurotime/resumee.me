@@ -1,19 +1,35 @@
-import { Loader, Plus, Share } from 'lucide-react'
+import {
+  Image as ImageIcon,
+  Link,
+  Loader,
+  PenBoxIcon,
+  Share,
+  Text,
+  User
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { TooltipComponent } from './TooltipComponent'
-import { User } from '@/types'
+import { User as UserType } from '@/types'
 import { WebMenu } from './WebMenu'
 import { motion } from 'framer-motion'
 import { useSite } from '@/contexts/SiteContext'
 
 interface FloatingBottomBarProps {
-  onAddBlock: () => void
-  user: User
+  onAddProfileBlock: () => void
+  onAddDescriptionBlock: () => void
+  onAddLinkBlock: () => void
+  onAddImageBlock: () => void
+  onAddNoteBlock: () => void
+  user: UserType
 }
 
 export function FloatingBottomBar({
-  onAddBlock,
+  onAddProfileBlock,
+  onAddDescriptionBlock,
+  onAddLinkBlock,
+  onAddImageBlock,
+  onAddNoteBlock,
   user
 }: FloatingBottomBarProps) {
   const handleShare = async () => {}
@@ -54,18 +70,57 @@ export function FloatingBottomBar({
         </div>
 
         <div className='flex items-center gap-2'>
-          {[...Array(5)].map((_, index) => (
-            <TooltipComponent key={index} label='Settings'>
-              <Button
-                onClick={onAddBlock}
-                variant='ghost'
-                size='icon'
-                className='w-10 h-10'
-              >
-                <Plus className='h-5 w-5' />
-              </Button>
-            </TooltipComponent>
-          ))}
+          <TooltipComponent label='Profile picture'>
+            <Button
+              onClick={onAddProfileBlock}
+              variant='ghost'
+              size='icon'
+              className='w-10 h-10'
+            >
+              <User className='h-5 w-5' />
+            </Button>
+          </TooltipComponent>
+          <TooltipComponent label='Description'>
+            <Button
+              onClick={onAddDescriptionBlock}
+              variant='ghost'
+              size='icon'
+              className='w-10 h-10'
+            >
+              <Text className='h-5 w-5' />
+            </Button>
+          </TooltipComponent>
+          <TooltipComponent label='Link'>
+            <Button
+              onClick={onAddLinkBlock}
+              variant='ghost'
+              size='icon'
+              className='w-10 h-10'
+            >
+              <Link className='h-5 w-5' />
+            </Button>
+          </TooltipComponent>
+
+          <TooltipComponent label='Image'>
+            <Button
+              onClick={onAddImageBlock}
+              variant='ghost'
+              size='icon'
+              className='w-10 h-10'
+            >
+              <ImageIcon className='h-6 w-6' />
+            </Button>
+          </TooltipComponent>
+          <TooltipComponent label='New Note'>
+            <Button
+              onClick={onAddNoteBlock}
+              variant='ghost'
+              size='icon'
+              className='w-10 h-10'
+            >
+              <PenBoxIcon className='h-6 w-6' />
+            </Button>
+          </TooltipComponent>
         </div>
       </div>
     </motion.div>

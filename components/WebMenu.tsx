@@ -91,7 +91,6 @@ export function WebMenu({ website }: { user: User | null; website: Website }) {
   const handleSaveUsername = (newUsername: string) => {
     // Implement save logic for username
 
-    console.log('Saving username:', newUsername)
     updateWebsiteSlug(website?.id || '', newUsername)
     // Update the current window URL path
     if (typeof window !== 'undefined') {

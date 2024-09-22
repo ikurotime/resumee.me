@@ -57,8 +57,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         user_id: data.user.id,
         page_name: websiteName,
         blocks: [
-          { i: 'profile', x: 0, y: 0, w: 1, h: 1, isResizable: false },
-          { i: 'info', x: 1, y: 0, w: 2, h: 1, isResizable: false }
+          {
+            i: 'profile',
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+            isResizable: false,
+            type: 'profile'
+          },
+          {
+            i: 'info',
+            x: 1,
+            y: 0,
+            w: 2,
+            h: 1,
+            isResizable: false,
+            type: 'info'
+          }
         ]
       })
     }

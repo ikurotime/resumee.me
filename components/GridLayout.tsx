@@ -12,6 +12,7 @@ interface BlockProps {
   website: Website
   url?: string
   title?: string
+  type?: string
 }
 interface GridLayoutProps {
   keys: BlockType[]
@@ -28,10 +29,9 @@ const DeleteButton = ({ id }: { id: string }) => {
   return (
     <button
       onClick={() => {
-        console.log('AAAAAA')
         deleteBlock(id)
       }}
-      className='absolute z-[9999] -top-3 -right-3 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors'
+      className='bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors'
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'
@@ -106,15 +106,18 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
           <motion.div
             key={key.i}
             variants={itemVariants}
-            className='bg-[#fff] relative shadow border flex justify-center items-center  rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing'
+            className='bg-[#fff] relative shadow border flex justify-center items-center rounded-2xl text-2xl text-[#1d1d1f] visible cursor-grab active:cursor-grabbing group'
           >
-            <DeleteButton id={key.i} />
+            <div className='absolute z-[9999] -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity'>
+              <DeleteButton id={key.i} />
+            </div>
             <Block
               keyProp={key.i}
               user={user}
               website={website}
               url={key.url}
               title={key.title}
+              type={key.type}
             />
           </motion.div>
         ))}
@@ -123,9 +126,16 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
   )
 }
 
-export function Block({ keyProp, user, website, url, title }: BlockProps) {
+export function Block({
+  keyProp,
+  user,
+  website,
+  url,
+  title,
+  type
+}: BlockProps) {
   const blockContent = () => {
-    switch (keyProp) {
+    switch (type) {
       case 'profile':
         return (
           <div className='flex flex-col items-center justify-center'>
@@ -138,7 +148,7 @@ export function Block({ keyProp, user, website, url, title }: BlockProps) {
         )
       case 'info':
         return (
-          <div className='flex flex-col'>
+          <div className='flex flex-col px-8'>
             <h1 className='text-4xl font-bold mb-2'>{website.title}</h1>
             <p className='text-gray-600'>{website.description}</p>
           </div>
