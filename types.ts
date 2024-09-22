@@ -2,6 +2,13 @@
 // Common type for UUID
 type UUID = string
 
+export interface BlockProps {
+  block: Block
+  user: User
+}
+export interface GridLayoutProps {
+  user: User
+}
 // User related types
 interface User {
   id: UUID
@@ -38,15 +45,6 @@ interface Website {
   created_at?: Date
   updated_at?: Date
   blocks: Block[]
-}
-
-// Block type related types
-interface BlockType {
-  id: UUID
-  name: string
-  description?: string
-  created_at: Date
-  updated_at: Date
 }
 
 // Block related types
@@ -151,7 +149,6 @@ export type {
   User,
   WebsiteTheme,
   Website,
-  BlockType,
   Block,
   Technology,
   ProficiencyLevel,

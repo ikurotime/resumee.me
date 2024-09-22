@@ -1,5 +1,6 @@
 'use client'
 
+import { Block, User as UserType } from '@/types'
 import {
   Image as ImageIcon,
   Link,
@@ -14,44 +15,87 @@ import { AnimatedLinkInput } from './AnimatedLinkInput'
 import { Button } from '@/components/ui/button'
 import { ImageUpload } from './ImageUpload'
 import { TooltipComponent } from './TooltipComponent'
-import { User as UserType } from '@/types'
 import { WebMenu } from './WebMenu'
 import { motion } from 'framer-motion'
 import { useSite } from '@/contexts/SiteContext'
 import { useState } from 'react'
+import { v4 as uuid } from 'uuid'
 
 interface FloatingBottomBarProps {
-  onAddProfileBlock: () => void
-  onAddDescriptionBlock: () => void
-  onAddLinkBlock: (url: string, type: string) => void
-  onAddImageBlock: (url: string) => void
-  onAddNoteBlock: () => void
   user: UserType
 }
 
-export function FloatingBottomBar({
-  onAddProfileBlock,
-  onAddDescriptionBlock,
-  onAddLinkBlock,
-  onAddImageBlock,
-  onAddNoteBlock,
-  user
-}: FloatingBottomBarProps) {
+export function FloatingBottomBar({ user }: FloatingBottomBarProps) {
   const handleShare = async () => {}
-  const { isSaving, website } = useSite()
+  const { isSaving, website, saveWebsite } = useSite()
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [showImageUpload, setShowImageUpload] = useState(false)
+
+  const handleAddProfileBlock = () =>
+    createNewBlock({ type: 'profile', size: { w: 1, h: 1 } })
+  const handleAddDescriptionBlock = () =>
+    createNewBlock({ type: 'info', size: { w: 2, h: 1 } })
+  const handleAddLinkBlock = (url: string, type: string) =>
+    createNewBlock({ type, size: { w: 1, h: 1 }, url })
+  const handleAddImageBlock = (imageUrl: string) =>
+    createNewBlock({ type: 'image', size: { w: 1, h: 1 }, imageUrl })
+  const handleAddNoteBlock = () =>
+    createNewBlock({ type: 'note', size: { w: 1, h: 1 } })
 
   const handleAddLink = (url: string) => {
     const domain = new URL(url).hostname.replace('www.', '')
     const type = domain.split('.')[0]
-    onAddLinkBlock(url, type)
+    handleAddLinkBlock(url, type)
     setShowLinkInput(false)
   }
 
   const handleAddImage = (url: string) => {
-    onAddImageBlock(url)
+    handleAddImageBlock(url)
     setShowImageUpload(false)
+  }
+
+  const createNewBlock = ({
+    type,
+    size,
+    url,
+    imageUrl
+  }: {
+    type: string
+    size: { w: number; h: number }
+    url?: string
+    imageUrl?: string
+  }) => {
+    const newBlockId = uuid()
+    const nextPosition = calculateNextPosition(website!.blocks)
+    const newBlock = {
+      i: newBlockId,
+      x: nextPosition.x,
+      y: nextPosition.y,
+      w: size.w,
+      h: size.h,
+      isResizable: true,
+      url: url,
+      title: '',
+      type: type,
+      imageUrl: imageUrl
+    }
+    saveWebsite({ blocks: [...website!.blocks, newBlock] })
+  }
+
+  const calculateNextPosition = (blocks: Block[]) => {
+    const maxY = Math.max(...blocks.map((block) => block.y + block.h), 0)
+    const lastRowBlocks = blocks.filter((block) => block.y + block.h === maxY)
+    const maxXInLastRow = Math.max(
+      ...lastRowBlocks.map((block) => block.x + block.w),
+      0
+    )
+
+    if (maxXInLastRow + 1 <= 2) {
+      // Assuming a grid width of 3
+      return { x: maxXInLastRow, y: maxY - 1 }
+    } else {
+      return { x: 0, y: maxY }
+    }
   }
 
   return (
@@ -91,7 +135,7 @@ export function FloatingBottomBar({
         <div className='flex items-center gap-2'>
           <TooltipComponent label='Profile picture'>
             <Button
-              onClick={onAddProfileBlock}
+              onClick={handleAddProfileBlock}
               variant='ghost'
               size='icon'
               className='w-10 h-10'
@@ -101,7 +145,7 @@ export function FloatingBottomBar({
           </TooltipComponent>
           <TooltipComponent label='Description'>
             <Button
-              onClick={onAddDescriptionBlock}
+              onClick={handleAddDescriptionBlock}
               variant='ghost'
               size='icon'
               className='w-10 h-10'
@@ -148,7 +192,7 @@ export function FloatingBottomBar({
           </TooltipComponent>
           <TooltipComponent label='New Note'>
             <Button
-              onClick={onAddNoteBlock}
+              onClick={handleAddNoteBlock}
               variant='ghost'
               size='icon'
               className='w-10 h-10'

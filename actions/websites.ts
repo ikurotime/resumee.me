@@ -1,24 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use server'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Website } from '@/types'
 import { revalidatePath } from 'next/cache'
 import { supabase } from '@/lib/supabase-server'
-
-export async function searchWebsites(query: string) {
-  const { data, error } = await supabase
-    .from('websites')
-    .select('id, page_slug')
-    .ilike('page_slug', `%${query}%`)
-    .limit(10)
-
-  if (error) {
-    console.error('Error searching websites:', error)
-    return []
-  }
-
-  return data
-}
 
 export async function checkWebsiteExists(
   pageName: string
@@ -74,24 +59,7 @@ export async function getUserById(userId: string) {
 export async function getWebsiteByPath(pagePath: string) {
   const { data, error } = await supabase
     .from('websites')
-    .select(
-      `
-      id,
-      user_id,
-      domain,
-      title,
-      cv_name,
-      page_name,
-      page_slug,
-      is_cv_page,
-      page_content,
-      description,
-      is_published,
-      created_at,
-      updated_at,
-      blocks 
-    `
-    )
+    .select('*')
     .eq('page_slug', pagePath)
     .single()
 

@@ -5,6 +5,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --selected-card-background: rgba(0, 0, 0, 0.138); /* Default color for selected card */
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -13,8 +14,10 @@
     --foreground: #ededed;
   }
 } */
+
+
 .react-grid-item.react-grid-placeholder {
-  background: rgba(0, 0, 0, 0.438) none repeat scroll 0% 0%;
+  background:  var(--selected-card-background) none repeat scroll 0% 0%;
   transition-duration: 100ms;
   z-index: 2;
   -webkit-user-select: none;
@@ -22,8 +25,8 @@
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  border-radius: 32px;
-  transition: all 500ms ease 0s !important;
+  border-radius: 16px;
+  transition: all 2 00ms ease 0s !important;
   will-change: transform;
 }
 

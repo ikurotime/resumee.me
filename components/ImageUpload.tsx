@@ -7,7 +7,7 @@ import { ImageSelectionModal } from './ImageSelectionModal'
 import { Upload } from 'lucide-react'
 import { supabase } from '@/lib/supabase-client'
 import { useState } from 'react'
-import { uuid } from 'uuidv4'
+import { v4 as uuid } from 'uuid'
 
 interface ImageUploadProps {
   onUploadComplete: (url: string) => void
