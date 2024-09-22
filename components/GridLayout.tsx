@@ -1,9 +1,10 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Block as BlockType, User, Website } from '@/types'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'
+import { useMemo, useState } from 'react'
 
+import { ImageUpload } from './ImageUpload'
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
 import { useSite } from '@/contexts/SiteContext'
 
 interface BlockProps {
@@ -97,7 +98,7 @@ function GridLayout({ keys, user, website, layout }: GridLayoutProps) {
       <ResponsiveReactGridLayout
         className='m-auto w-[900px]'
         breakpoints={{ xl: 1200, lg: 899, md: 768, sm: 480, xs: 200 }}
-        cols={{ xl: 3, lg: 3, md: 2, sm: 1, xs: 1 }}
+        cols={{ xl: 12, lg: 3, md: 2, sm: 1, xs: 1 }}
         rowHeight={300}
         layouts={layout}
         onDragStop={onLayoutChange}
@@ -134,6 +135,18 @@ export function Block({
   title,
   type
 }: BlockProps) {
+  const { saveWebsite } = useSite()
+  const [imageUrl, setImageUrl] = useState(url)
+
+  const handleImageUpload = (uploadedUrl: string) => {
+    setImageUrl(uploadedUrl)
+    saveWebsite({
+      blocks: website.blocks.map((block) =>
+        block.i === keyProp ? { ...block, url: uploadedUrl } : block
+      )
+    })
+  }
+
   const blockContent = () => {
     switch (type) {
       case 'profile':
@@ -221,6 +234,20 @@ export function Block({
             >
               {url}
             </a>
+          </div>
+        )
+      case 'image':
+        return (
+          <div className='flex flex-col items-center justify-center'>
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt='Uploaded'
+                className='max-w-full max-h-full object-contain'
+              />
+            ) : (
+              <ImageUpload onUploadComplete={handleImageUpload} />
+            )}
           </div>
         )
       default:

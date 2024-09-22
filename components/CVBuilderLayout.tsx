@@ -15,7 +15,11 @@ export function CVBuilder({
 }) {
   const { website, saveWebsite } = useSite()
 
-  const createNewBlock = (type: string, size: { w: number; h: number }) => {
+  const createNewBlock = (
+    type: string,
+    size: { w: number; h: number },
+    url?: string
+  ) => {
     const newBlockId = `${website!.blocks.length}`
     const nextPosition = calculateNextPosition(website!.blocks)
     const newBlock = {
@@ -25,7 +29,7 @@ export function CVBuilder({
       w: size.w,
       h: size.h,
       isResizable: true,
-      url: '',
+      url: url,
       title: '',
       type: type
     }
@@ -34,7 +38,8 @@ export function CVBuilder({
 
   const handleAddProfileBlock = () => createNewBlock('profile', { w: 1, h: 1 })
   const handleAddDescriptionBlock = () => createNewBlock('info', { w: 2, h: 1 })
-  const handleAddLinkBlock = () => createNewBlock('link', { w: 1, h: 1 })
+  const handleAddLinkBlock = (url: string, type: string) =>
+    createNewBlock(type, { w: 1, h: 1 }, url)
   const handleAddImageBlock = () => createNewBlock('image', { w: 1, h: 1 })
   const handleAddNoteBlock = () => createNewBlock('note', { w: 1, h: 1 })
 

@@ -8,17 +8,19 @@ import {
   User
 } from 'lucide-react'
 
+import { AnimatedLinkInput } from './AnimatedLinkInput'
 import { Button } from '@/components/ui/button'
 import { TooltipComponent } from './TooltipComponent'
 import { User as UserType } from '@/types'
 import { WebMenu } from './WebMenu'
 import { motion } from 'framer-motion'
 import { useSite } from '@/contexts/SiteContext'
+import { useState } from 'react'
 
 interface FloatingBottomBarProps {
   onAddProfileBlock: () => void
   onAddDescriptionBlock: () => void
-  onAddLinkBlock: () => void
+  onAddLinkBlock: (url: string, type: string) => void
   onAddImageBlock: () => void
   onAddNoteBlock: () => void
   user: UserType
@@ -34,13 +36,21 @@ export function FloatingBottomBar({
 }: FloatingBottomBarProps) {
   const handleShare = async () => {}
   const { isSaving, website } = useSite()
+  const [showLinkInput, setShowLinkInput] = useState(false)
+
+  const handleAddLink = (url: string) => {
+    const domain = new URL(url).hostname.replace('www.', '')
+    const type = domain.split('.')[0]
+    onAddLinkBlock(url, type)
+    setShowLinkInput(false)
+  }
 
   return (
     <motion.div
       initial={{ y: 100 }}
       animate={{ y: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-      className='fixed bottom-4  transform right-0 left-0 bg-white rounded-full shadow-lg mx-auto max-w-3xl w-full'
+      className='fixed bottom-4 transform right-0 left-0 bg-white rounded-full shadow-lg mx-auto max-w-3xl w-full'
     >
       <div className='flex items-center justify-between px-4 py-2'>
         <div className='flex gap-4 items-center'>
@@ -91,14 +101,22 @@ export function FloatingBottomBar({
             </Button>
           </TooltipComponent>
           <TooltipComponent label='Link'>
-            <Button
-              onClick={onAddLinkBlock}
-              variant='ghost'
-              size='icon'
-              className='w-10 h-10'
-            >
-              <Link className='h-5 w-5' />
-            </Button>
+            <div className='relative'>
+              <Button
+                onClick={() => setShowLinkInput(true)}
+                variant='ghost'
+                size='icon'
+                className='w-10 h-10'
+              >
+                <Link className='h-5 w-5' />
+              </Button>
+              {showLinkInput && (
+                <AnimatedLinkInput
+                  onSave={handleAddLink}
+                  onCancel={() => setShowLinkInput(false)}
+                />
+              )}
+            </div>
           </TooltipComponent>
 
           <TooltipComponent label='Image'>
