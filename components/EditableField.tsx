@@ -1,5 +1,4 @@
-import { useState } from 'react'
-
+import { Fragment, useEffect, useState } from 'react'
 export function EditableField({
   value,
   onSave,
@@ -15,19 +14,28 @@ export function EditableField({
 }) {
   const [isEditing, setIsEditing] = useState(false)
   const [editedValue, setEditedValue] = useState(value)
+
+  useEffect(() => {
+    setEditedValue(value) // Update editedValue when value changes
+  }, [value])
+
   const handleSave = () => {
-    onSave(editedValue)
+    if (editedValue !== value) {
+      onSave(editedValue)
+    }
     setIsEditing(false)
   }
 
-  if (!isEditable || !isEditing) {
+  if ((!isEditable || !isEditing) && value !== '') {
     return (
-      <div
-        className={className}
-        onClick={() => isEditable && setIsEditing(true)}
-      >
-        {value}
-      </div>
+      <p className={className} onClick={() => isEditable && setIsEditing(true)}>
+        {value.split('\n').map((line, index) => (
+          <Fragment key={index}>
+            {line}
+            {index < value.split('\n').length - 1 && <br />}
+          </Fragment>
+        ))}
+      </p>
     )
   }
 

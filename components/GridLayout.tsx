@@ -161,8 +161,7 @@ function GridLayout({ user }: GridLayoutProps) {
 export function Block({ block, user }: BlockProps) {
   const { website, saveWebsite } = useSite()
   const [title, setTitle] = useState(block.title || '') // State for block title
-  console.log(block)
-  const [description, setDescription] = useState(block?.content || 'Edit me!') // State for description
+  const [description, setDescription] = useState(block?.content || '') // State for description
   const [noteContent, setNoteContent] = useState(block.content || '') // State for note content
 
   const handleTitleSave = (newTitle: string) => {
@@ -180,7 +179,7 @@ export function Block({ block, user }: BlockProps) {
     setDescription(newContent)
     const updatedBlocks = website!.blocks.map((b) => {
       if (b.i === block.i) {
-        return { ...b, content: newContent } // Update the title of the modified block
+        return { ...b, content: newContent } // Update the content of the modified block
       }
       return b
     })
@@ -208,7 +207,7 @@ export function Block({ block, user }: BlockProps) {
           className={`colored ${social.bgColor} text-white p-4 rounded-2xl flex h-full overflow-hidden w-full relative`}
         >
           <EditableField
-            value={title || social.title} // Use the block's title directly
+            value={title} // Use the block's title directly
             onSave={handleTitleSave} // Save the block title
             isEditable={true}
             className={`text-xl font-bold mb-2 cursor-text ${social.bgColor} focus:ring-offset-0 focus:ring-0`}
@@ -252,7 +251,7 @@ export function Block({ block, user }: BlockProps) {
               type='text'
             />
             <EditableField
-              value={description}
+              value={description} // Use the block's description directly
               onSave={handleDescriptionSave}
               isEditable={true}
               className='text-gray-600 cursor-text flex w-full'
@@ -281,7 +280,7 @@ export function Block({ block, user }: BlockProps) {
               type='text'
             />
             <EditableField
-              value={noteContent || 'Edit me! '}
+              value={noteContent || 'Edit me! '} // Use the note content
               onSave={handleNoteContentSave}
               isEditable={true}
               className='text-gray-600 cursor-text flex w-full text-base h-full resize-none'
