@@ -160,37 +160,34 @@ function GridLayout({ user }: GridLayoutProps) {
 
 export function Block({ block, user }: BlockProps) {
   const { website, saveWebsite } = useSite()
-  const [newTitle, setNewTitle] = useState(website?.title || 'Your name')
-  const [description, setDescription] = useState(
-    website?.description || 'Edit me!'
-  )
-  const [noteTitle, setNoteTitle] = useState(block.title || '') // State for note content
+  const [title, setTitle] = useState(block.title || '') // State for block title
+  console.log(block)
+  const [description, setDescription] = useState(block?.content || 'Edit me!') // State for description
   const [noteContent, setNoteContent] = useState(block.content || '') // State for note content
 
-  const handleTitleSave = (titleToSave: string) => {
-    setNewTitle(titleToSave)
-    saveWebsite({ title: titleToSave })
-  }
-
-  const handleDescriptionSave = (newDescription: string) => {
-    setDescription(newDescription)
-    saveWebsite({ description: newDescription })
-  }
-
-  const handleNoteTitleSave = (newNoteTitle: string) => {
-    // Update the specific block's content
-    setNoteTitle(newNoteTitle)
+  const handleTitleSave = (newTitle: string) => {
+    setTitle(newTitle)
     const updatedBlocks = website!.blocks.map((b) => {
       if (b.i === block.i) {
-        return { ...b, title: newNoteTitle } // Update the content of the modified block
+        return { ...b, title: newTitle } // Update the title of the modified block
       }
       return b
     })
     saveWebsite({ blocks: updatedBlocks }) // Save the updated blocks
   }
 
+  const handleDescriptionSave = (newContent: string) => {
+    setDescription(newContent)
+    const updatedBlocks = website!.blocks.map((b) => {
+      if (b.i === block.i) {
+        return { ...b, content: newContent } // Update the title of the modified block
+      }
+      return b
+    })
+    saveWebsite({ blocks: updatedBlocks })
+  }
+
   const handleNoteContentSave = (newNoteContent: string) => {
-    // Update the specific block's content
     setNoteContent(newNoteContent)
     const updatedBlocks = website!.blocks.map((b) => {
       if (b.i === block.i) {
@@ -200,8 +197,9 @@ export function Block({ block, user }: BlockProps) {
     })
     saveWebsite({ blocks: updatedBlocks }) // Save the updated blocks
   }
+
   const blockContent = () => {
-    const { type, title } = block
+    const { type } = block
     const social = SOCIAL_CARD_STYLES[type as keyof typeof SOCIAL_CARD_STYLES]
 
     if (social) {
@@ -209,7 +207,13 @@ export function Block({ block, user }: BlockProps) {
         <div
           className={`colored ${social.bgColor} text-white p-4 rounded-2xl flex h-full overflow-hidden w-full relative`}
         >
-          <h3 className='text-xl font-bold mb-2'>{title || social.title}</h3>
+          <EditableField
+            value={title || social.title} // Use the block's title directly
+            onSave={handleTitleSave} // Save the block title
+            isEditable={true}
+            className={`text-xl font-bold mb-2 cursor-text ${social.bgColor} focus:ring-offset-0 focus:ring-0`}
+            type='text'
+          />
           <a
             href={block.url}
             target='_blank'
@@ -241,7 +245,7 @@ export function Block({ block, user }: BlockProps) {
         return (
           <div className='flex flex-col px-8 w-full'>
             <EditableField
-              value={newTitle}
+              value={title} // Use the block's title directly
               onSave={handleTitleSave}
               isEditable={true}
               className='text-4xl font-bold mb-2 cursor-text'
@@ -270,15 +274,15 @@ export function Block({ block, user }: BlockProps) {
         return (
           <div className='w-full h-full overflow-hidden flex flex-col p-5'>
             <EditableField
-              value={noteTitle || 'New note'}
-              onSave={handleNoteTitleSave} // Save the note content
+              value={title} // Use the block's title directly
+              onSave={handleTitleSave}
               isEditable={true}
               className='text-gray-600 cursor-text flex w-full font-bold text-xl'
               type='text'
             />
             <EditableField
               value={noteContent || 'Edit me! '}
-              onSave={handleNoteContentSave} // Save the note content
+              onSave={handleNoteContentSave}
               isEditable={true}
               className='text-gray-600 cursor-text flex w-full text-base h-full resize-none'
               type='textarea'

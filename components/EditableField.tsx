@@ -32,14 +32,16 @@ export function EditableField({
   }
 
   return type === 'text' ? (
-    <input
-      type={type}
-      value={editedValue}
-      onChange={(e) => setEditedValue(e.target.value)}
-      onBlur={handleSave}
-      className={className}
-      autoFocus
-    />
+    <div>
+      <input
+        type={type}
+        value={editedValue}
+        onChange={(e) => setEditedValue(e.target.value)}
+        onBlur={handleSave}
+        className={className}
+        autoFocus
+      />
+    </div>
   ) : (
     <textarea
       value={editedValue}
