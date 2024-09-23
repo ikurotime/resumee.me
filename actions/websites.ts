@@ -109,7 +109,9 @@ export async function createWebsite(website: Website) {
     domain: 'resumee.me',
     page_slug: website.page_slug,
     is_cv_page: true,
-    is_published: false
+    is_published: false,
+    blocks: website.blocks,
+    page_content: '#f2f2f2'
   })
 
   if (error) {

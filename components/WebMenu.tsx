@@ -13,6 +13,7 @@ import { User, Website } from '@/types'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { TooltipComponent } from './TooltipComponent'
+import { logout } from '@/actions/login'
 import { updateWebsiteSlug } from '@/actions/websites'
 import { useState } from 'react'
 
@@ -140,7 +141,7 @@ export function WebMenu({ website }: { user: User | null; website: Website }) {
           onSave={handleSavePassword}
         />
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => logout()}>
           <LogOut className='mr-2 h-4 w-4' />
           <span>Log out</span>
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

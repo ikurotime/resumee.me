@@ -5,6 +5,7 @@ import { useCallback, useState } from 'react'
 
 import Link from 'next/link'
 import { checkWebsiteExists } from '@/actions/websites'
+import { createClient } from '@/utils/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useDebounce } from '@/hooks'
 import { useRouter } from 'next/navigation'
@@ -21,6 +22,19 @@ export default function ClaimLinkPage() {
     errorMessage: '',
     isAvailable: false
   })
+  const supabase = createClient()
+  const handleGoogleLogin = () => {
+    const isLocalEnv = process.env.NODE_ENV === 'development'
+
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: isLocalEnv
+          ? `http://localhost:3000/auth/callback?claim=${formState.inputValue}`
+          : 'https://resumee.me/auth/callback'
+      }
+    })
+  }
 
   const updateFormState = (updates: Partial<typeof formState>) => {
     setFormState((prev) => ({ ...prev, ...updates }))
@@ -246,6 +260,7 @@ export default function ClaimLinkPage() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
+                    onClick={handleGoogleLogin}
                     className='w-full py-2 bg-white text-black border border-gray-300 rounded-md hover:bg-gray-50 transition-colors'
                   >
                     Sign up with Google

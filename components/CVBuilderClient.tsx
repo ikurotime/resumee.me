@@ -27,7 +27,8 @@ export function CVBuilderClient({
         error
       } = await supabase.auth.getUser()
       if (error) {
-        console.error('Error fetching user:', error)
+        //console.error('Error fetching user:', error)
+        setIsLoading(false)
         return
       }
       setCurrentUser(user)
@@ -46,17 +47,17 @@ export function CVBuilderClient({
 
   return (
     <SiteProvider initialWebsite={initialWebsite}>
-      <motion.div
-        initial={{ opacity: 0, scale: 1 }}
-        animate={{ opacity: isLoading ? 0 : 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        {isLoading ? (
-          <Loading />
-        ) : (
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 1 }}
+          animate={{ opacity: isLoading ? 0 : 1 }}
+          transition={{ duration: 0.5 }}
+        >
           <CVBuilder user={initialUser} isOwnProfile={isOwnProfile} />
-        )}
-      </motion.div>
+        </motion.div>
+      )}
     </SiteProvider>
   )
 }

@@ -1,6 +1,8 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/client'
 import { login } from '@/actions/login'
 import { useState } from 'react'
 
@@ -18,6 +20,12 @@ export default function LoginPage() {
       setError('Failed to log in. Please check your credentials.')
     }
   }
+  const supabase = createClient()
+  const handleLoginWithGoogle = () => {
+    supabase.auth.signInWithOAuth({
+      provider: 'google'
+    })
+  }
 
   return (
     <div className='flex min-h-screen bg-white'>
@@ -27,7 +35,7 @@ export default function LoginPage() {
             Log in to your account
           </h1>
           <form onSubmit={handleLogin}>
-            <div className='mb-4'>
+            <div className='flex mb-4'>
               <input
                 type='email'
                 placeholder='Email'
@@ -55,6 +63,7 @@ export default function LoginPage() {
               Log in
             </button>
           </form>
+          <Button onClick={handleLoginWithGoogle}>Sign in with Google</Button>
           <Link
             href='/signup'
             className='block mt-4 text-sm text-gray-500 hover:underline'
