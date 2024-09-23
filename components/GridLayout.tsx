@@ -1,3 +1,5 @@
+'use client'
+
 import { BlockProps, GridLayoutProps } from '@/types'
 import { Grip, SquareArrowOutUpRightIcon } from 'lucide-react'
 import { Layout, Responsive, WidthProvider } from 'react-grid-layout'

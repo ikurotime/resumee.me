@@ -5,7 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ImageSelectionModal } from './ImageSelectionModal'
 import { Upload } from 'lucide-react'
-import { supabase } from '@/lib/supabase-client'
+import { createClient } from '@/utils/supabase/client'
+import { updateUserProfilePic } from '@/actions/websites'
+import { useSite } from '@/contexts/SiteContext'
 import { useState } from 'react'
 import { v4 as uuid } from 'uuid'
 
@@ -17,7 +19,8 @@ interface ImageUploadProps {
 export function ImageUpload({ onUploadComplete, onCancel }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [showModal, setShowModal] = useState(false)
-
+  const [isProfileImage, setIsProfileImage] = useState(false)
+  const { website } = useSite()
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -27,13 +30,13 @@ export function ImageUpload({ onUploadComplete, onCancel }: ImageUploadProps) {
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('You must select an image to upload.')
       }
-
-      const user = await supabase.auth.getSession()
+      const supabase = createClient()
+      const user = await supabase.auth.getUser()
       const file = event.target.files[0]
       const fileExt = file.name.split('.').pop()
       const fileName = `${uuid()}.${fileExt}`
 
-      const filePath = `${user.data.session?.user.id}/${fileName}`
+      const filePath = `${user.data.user?.id}/${fileName}`
       const { error: uploadError } = await supabase.storage
         .from('images')
         .upload(filePath, file)
@@ -43,7 +46,14 @@ export function ImageUpload({ onUploadComplete, onCancel }: ImageUploadProps) {
 
       const { data } = supabase.storage.from('images').getPublicUrl(filePath)
 
-      onUploadComplete(data.publicUrl)
+      const user_id = user.data?.user?.id
+
+      if (isProfileImage && user_id) {
+        console.log({ user_id, url: data.publicUrl })
+        updateUserProfilePic(user_id, data.publicUrl, website?.page_slug ?? '/')
+      } else {
+        onUploadComplete(data.publicUrl)
+      }
     } catch (error) {
       alert('Error uploading image!')
       console.log(error)
@@ -78,6 +88,14 @@ export function ImageUpload({ onUploadComplete, onCancel }: ImageUploadProps) {
           className='flex gap-4 items-center cursor-pointer text-sm  mb-2 px-4 py-2 bg-blue-500 w-full text-white rounded hover:bg-blue-600 transition-colors'
         >
           <Upload size={16} /> {uploading ? 'Uploading...' : 'Upload New Image'}
+        </label>
+        <label
+          htmlFor='imageUpload'
+          onClick={() => setIsProfileImage(true)}
+          className='flex gap-4 items-center cursor-pointer text-sm  mb-2 px-4 py-2 bg-green-500 w-full text-white rounded hover:bg-green-600 transition-colors'
+        >
+          <Upload size={16} />{' '}
+          {uploading ? 'Uploading...' : 'Upload Profile Image'}
         </label>
         <div className='flex justify-between  mt-2'>
           <Button variant='outline' size='sm' onClick={onCancel}>

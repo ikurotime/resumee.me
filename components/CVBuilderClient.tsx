@@ -6,8 +6,8 @@ import { useEffect, useState } from 'react'
 import { CVBuilder } from './CVBuilderLayout'
 import Loading from './Loading'
 import { SiteProvider } from '@/contexts/SiteContext'
+import { createClient } from '@/utils/supabase/client'
 import { motion } from 'framer-motion'
-import { useAuth } from '@/contexts/AuthContext'
 
 export function CVBuilderClient({
   initialWebsite,
@@ -16,11 +16,28 @@ export function CVBuilderClient({
   initialWebsite: Website
   initialUser: User
 }) {
-  const { user: currentUser } = useAuth()
+  const supabase = createClient()
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (initialWebsite && initialUser) {
+    async function fetchUser() {
+      const {
+        data: { user },
+        error
+      } = await supabase.auth.getUser()
+      if (error) {
+        console.error('Error fetching user:', error)
+        return
+      }
+      setCurrentUser(user)
+    }
+
+    fetchUser()
+  }, [supabase.auth])
+
+  useEffect(() => {
+    if (initialWebsite && initialUser && currentUser) {
       setIsLoading(false)
     }
   }, [initialWebsite, initialUser, currentUser])

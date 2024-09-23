@@ -1,14 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { getWebsiteByUserId } from '@/actions/websites'
-import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
+import { login } from '@/actions/login'
 import { useState } from 'react'
 
 export default function LoginPage() {
-  const { signIn } = useAuth()
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -16,9 +12,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const { user } = await signIn(email, password)
-      const website = await getWebsiteByUserId(user.id)
-      router.push(`/${website.page_slug}`)
+      await login(email, password)
     } catch (error) {
       console.error(error)
       setError('Failed to log in. Please check your credentials.')

@@ -2,12 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Website } from '@/types'
+import { createClient } from '@/utils/supabase/server'
+import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { supabase } from '@/lib/supabase-server'
 
 export async function checkWebsiteExists(
   pageName: string
 ): Promise<{ exists: boolean; message?: string }> {
+  const supabase = createClient()
   const { count, error } = await supabase
     .from('websites')
     .select('id', { count: 'exact', head: true })
@@ -30,6 +32,7 @@ export async function checkWebsiteExists(
 }
 
 export async function getWebsiteByUserId(userId: string) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('websites')
     .select('*')
@@ -44,6 +47,7 @@ export async function getWebsiteByUserId(userId: string) {
 }
 
 export async function getUserById(userId: string) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('users')
     .select('*')
@@ -56,7 +60,30 @@ export async function getUserById(userId: string) {
   return { data, error }
 }
 
+export async function updateUserProfilePic(
+  userId: string,
+  imageUrl: string,
+  page_slug: string
+) {
+  const supabase = createClient()
+
+  const { error } = await supabase
+    .from('users')
+    .update({ profile_picture: imageUrl })
+    .eq('id', userId)
+    .select()
+
+  if (error) {
+    console.error('Error updating user profile picture:', error)
+    throw error
+  }
+
+  revalidatePath(`/${page_slug}`, 'layout')
+  redirect(`/${page_slug}`)
+}
+
 export async function getWebsiteByPath(pagePath: string) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('websites')
     .select('*')
@@ -75,6 +102,7 @@ export async function getWebsiteByPath(pagePath: string) {
 }
 
 export async function createWebsite(website: Website) {
+  const supabase = createClient()
   const { data, error } = await supabase.from('websites').insert({
     user_id: website.user_id,
     page_name: website.page_name,
@@ -96,6 +124,7 @@ export async function updateWebsite(
   websiteId: string,
   updates: Partial<Website>
 ) {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('websites')
     .update(updates)
@@ -113,6 +142,7 @@ export async function updateWebsite(
 }
 
 export async function updatePassword(websiteId: string, password: string) {
+  const supabase = createClient()
   const { error } = await supabase.auth.updateUser({
     password
   })
@@ -121,6 +151,7 @@ export async function updatePassword(websiteId: string, password: string) {
 }
 
 export async function updateWebsiteSlug(websiteId: string, slug: string) {
+  const supabase = createClient()
   const { error } = await supabase
     .from('websites')
     .update({ page_slug: slug })
