@@ -35,35 +35,44 @@ export default function LoginPage() {
             Log in to your account
           </h1>
           <form onSubmit={handleLogin}>
-            <div className='flex mb-4'>
-              <input
-                type='email'
-                placeholder='Email'
-                className='w-full p-2 border rounded-md text-black placeholder-gray-500'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className='mb-4'>
-              <input
-                type='password'
-                placeholder='Password'
-                className='w-full p-2 border rounded-md text-black placeholder-gray-500'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+            <div className='flex gap-4'>
+              <div className='flex mb-4 w-full'>
+                <input
+                  type='email'
+                  placeholder='Email'
+                  className='w-full p-2 border rounded-md text-black placeholder-gray-500'
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className='mb-4 w-full'>
+                <input
+                  type='password'
+                  placeholder='Password'
+                  className='w-full p-2 border rounded-md text-black placeholder-gray-500'
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
             </div>
             {error && <p className='text-red-500 mb-4'>{error}</p>}
             <button
               type='submit'
-              className='w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 transition-colors'
+              className='w-full py-2 bg-zinc-900 text-white rounded-md hover:bg-zinc-800 transition-colors '
             >
               Log in
             </button>
           </form>
-          <Button onClick={handleLoginWithGoogle}>Sign in with Google</Button>
+          <Button
+            className='mt-4 w-full flex'
+            variant={'outline'}
+            size={'2xl'}
+            onClick={handleLoginWithGoogle}
+          >
+            Sign in with Google
+          </Button>
           <Link
             href='/signup'
             className='block mt-4 text-sm text-gray-500 hover:underline'
@@ -73,7 +82,15 @@ export default function LoginPage() {
         </div>
       </div>
       <div className='w-1/2 bg-gray-100'>
-        {/* Right side content or image placeholder */}
+        <video
+          width='1200'
+          height='720'
+          src='/recording.mp4'
+          loop
+          className='h-full object-cover'
+          muted
+          autoPlay
+        />
       </div>
     </div>
   )

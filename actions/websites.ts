@@ -161,3 +161,36 @@ export async function updateWebsiteSlug(websiteId: string, slug: string) {
   if (error) throw error
   revalidatePath(`/${slug}`)
 }
+export async function addInterestedEmail(email: string) {
+  const supabase = createClient()
+
+  // First, check if the email already exists
+  const { data: existingEmail, error: checkError } = await supabase
+    .from('emails_interested')
+    .select('email')
+    .eq('email', email)
+    .single()
+
+  if (checkError && checkError.code !== 'PGRST116') {
+    console.error('Error checking existing email:', checkError)
+    throw checkError
+  }
+
+  // If email doesn't exist, insert it
+  if (!existingEmail) {
+    const { error: insertError } = await supabase
+      .from('emails_interested')
+      .insert({ email })
+
+    if (insertError) {
+      console.error('Error inserting email:', insertError)
+      throw insertError
+    }
+
+    console.log('Email added successfully:', email)
+    return true
+  } else {
+    console.log('Email already exists:', email)
+    return false
+  }
+}

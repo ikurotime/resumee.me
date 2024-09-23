@@ -272,7 +272,15 @@ export default function ClaimLinkPage() {
         </AnimatePresence>
       </div>
       <div className='w-1/2 bg-gray-100'>
-        {/* Right side content or image placeholder */}
+        <video
+          width='1200'
+          height='720'
+          className='h-full object-cover'
+          src='/recording.mp4'
+          loop
+          muted
+          autoPlay
+        />
       </div>
     </div>
   )
