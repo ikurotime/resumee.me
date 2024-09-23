@@ -38,21 +38,21 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   if (
-    user &&
-    request.nextUrl.pathname.startsWith('/login') &&
-    request.nextUrl.pathname.startsWith('/signup') &&
-    request.nextUrl.pathname.startsWith('/auth')
+    (user && request.nextUrl.pathname.startsWith('/login')) ||
+    (user && request.nextUrl.pathname.startsWith('/signup')) ||
+    (user && request.nextUrl.pathname.startsWith('/auth'))
   ) {
-    const { data } = await supabase
+    const {
+      data: { page_slug }
+    } = await supabase
       .from('websites')
-      .select('page_slug')
-      .eq('id', user.id)
+      .select('*')
+      .eq('user_id', user.id)
       .select()
       .single()
-    console.log({ data })
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
-    url.pathname = data.page_slug || '/error'
+    url.pathname = `/${page_slug}` || '/error'
     return NextResponse.redirect(url)
   }
 
