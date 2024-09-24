@@ -19,7 +19,7 @@ export async function login(email: string, password: string) {
   if (!user || error) redirect('/error')
 
   const website = await getWebsiteByUserId(user.id)
-  redirect(`/${website.page_slug}`)
+  redirect(`/${website?.page_slug ?? ''}`)
 }
 
 export async function signup(formData: FormData) {

@@ -1,5 +1,7 @@
+import { createWebsite } from '@/actions/websites'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { v4 } from 'uuid'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -42,17 +44,51 @@ export async function updateSession(request: NextRequest) {
     (user && request.nextUrl.pathname.startsWith('/signup')) ||
     (user && request.nextUrl.pathname.startsWith('/auth'))
   ) {
-    const {
-      data: { page_slug = '' }
-    } = await supabase
+    const { data } = await supabase
       .from('websites')
       .select('*')
       .eq('user_id', user.id)
       .select()
       .single()
+    if (user && !data.slug_name) {
+      createWebsite({
+        user_id: user.id,
+        page_slug: v4(),
+        blocks: [
+          {
+            i: v4(),
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+            isResizable: false,
+            url: '',
+            type: 'profile',
+            imageUrl: '',
+            content: '',
+            title: '',
+            fullSizedImage: false
+          },
+          {
+            i: v4(),
+            x: 2,
+            y: 0,
+            w: 2,
+            h: 1,
+            isResizable: false,
+            url: '',
+            type: 'info',
+            title: 'Welcome to your page!',
+            content: 'Use the buttons below to add some cards.',
+            imageUrl: '',
+            fullSizedImage: false
+          }
+        ]
+      })
+    }
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone()
-    url.pathname = `/${page_slug}` || '/error'
+    url.pathname = `/${data?.page_slug || ''}` || '/error'
     return NextResponse.redirect(url)
   }
 
