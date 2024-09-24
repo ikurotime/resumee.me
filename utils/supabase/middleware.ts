@@ -50,7 +50,7 @@ export async function updateSession(request: NextRequest) {
       .eq('user_id', user.id)
       .select()
       .single()
-    if (user && !data.slug_name) {
+    if (user && !data.page_slug) {
       createWebsite({
         user_id: user.id,
         page_slug: v4(),
