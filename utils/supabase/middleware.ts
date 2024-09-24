@@ -43,7 +43,7 @@ export async function updateSession(request: NextRequest) {
     (user && request.nextUrl.pathname.startsWith('/auth'))
   ) {
     const {
-      data: { page_slug }
+      data: { page_slug = '' }
     } = await supabase
       .from('websites')
       .select('*')
