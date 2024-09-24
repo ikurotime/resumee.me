@@ -1,6 +1,7 @@
 import './globals.css'
 
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CSPostHogProvider } from './providers'
 import type { Metadata } from 'next'
 import localFont from 'next/font/local'
 
@@ -27,11 +28,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <AuthProvider>{children}</AuthProvider>
-      </body>
+      <CSPostHogProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <AuthProvider>{children}</AuthProvider>
+        </body>
+      </CSPostHogProvider>
     </html>
   )
 }
