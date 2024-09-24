@@ -7,7 +7,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { Github, Lock, LogOut, Settings } from 'lucide-react'
+import { Github, LogOut, Settings } from 'lucide-react'
 import { User, Website } from '@/types'
 
 import { Button } from '@/components/ui/button'
@@ -105,11 +105,6 @@ export function WebMenu({ website }: { user: User | null; website: Website }) {
   //   // Implement save logic for email
   //   console.log('Saving email:', newEmail)
   // }
-
-  const handleSavePassword = (newPassword: string) => {
-    // Implement save logic for password
-    console.log('Saving password:', newPassword)
-  }
 
   return (
     <DropdownMenu>
