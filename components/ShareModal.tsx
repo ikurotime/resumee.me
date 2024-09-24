@@ -30,7 +30,7 @@ const ShareModal: React.FC<ShareModalProps> = ({
       initial={{ opacity: 0 }}
       animate={{ opacity: isOpen ? 1 : 0 }}
       exit={{ opacity: 0 }}
-      className={`fixed inset-0 flex items-center justify-center pointer-events-none ${
+      className={`fixed inset-0 flex items-center justify-center  ${
         isOpen ? 'block' : 'hidden'
       }`}
     >

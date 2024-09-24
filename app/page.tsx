@@ -1,7 +1,5 @@
 'use client'
 
-import {} from 'lucide-react'
-
 import { Card, CardContent } from '@/components/ui/card'
 import { motion, useAnimation, useInView } from 'framer-motion'
 import { useEffect, useRef } from 'react'
