@@ -134,12 +134,12 @@ export function WebMenu({ website }: { user: User | null; website: Website }) {
           value={user?.email || ''}
           onSave={handleSaveEmail}
         /> */}
-        <ExpandableMenuItem
+        {/* <ExpandableMenuItem
           icon={<Lock className='h-5 w-5' />}
           label='Password'
           value='••••••••'
           onSave={handleSavePassword}
-        />
+        /> */}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => logout()}>
           <LogOut className='mr-2 h-4 w-4' />
