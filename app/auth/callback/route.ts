@@ -17,7 +17,7 @@ export async function GET(request: Request) {
       data: { user },
       error
     } = await supabase.auth.exchangeCodeForSession(code)
-    if (user && site) {
+    if (user) {
       const { data } = await supabase
         .from('users')
         .select('*')
@@ -25,7 +25,7 @@ export async function GET(request: Request) {
         .single()
       createWebsite({
         user_id: user.id,
-        page_slug: site,
+        page_slug: site ?? v4(),
         blocks: [
           {
             i: v4(),
