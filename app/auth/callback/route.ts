@@ -17,7 +17,12 @@ export async function GET(request: Request) {
       data: { user },
       error
     } = await supabase.auth.exchangeCodeForSession(code)
-    if (user) {
+    const { data } = await supabase
+      .from('websites')
+      .select('page_slug')
+      .eq('user_id', user?.id)
+      .single()
+    if (user && site) {
       const { data } = await supabase
         .from('users')
         .select('*')
@@ -25,7 +30,7 @@ export async function GET(request: Request) {
         .single()
       createWebsite({
         user_id: user.id,
-        page_slug: site ?? v4(),
+        page_slug: site,
         blocks: [
           {
             i: v4(),
@@ -57,12 +62,43 @@ export async function GET(request: Request) {
           }
         ]
       })
+    } else if (user && !data?.page_slug) {
+      createWebsite({
+        user_id: user.id,
+        page_slug: v4(),
+        blocks: [
+          {
+            i: v4(),
+            x: 0,
+            y: 0,
+            w: 1,
+            h: 1,
+            isResizable: false,
+            url: '',
+            type: 'profile',
+            imageUrl: '',
+            content: '',
+            title: '',
+            fullSizedImage: false
+          },
+          {
+            i: v4(),
+            x: 2,
+            y: 0,
+            w: 2,
+            h: 1,
+            isResizable: false,
+            url: '',
+            type: 'info',
+            title: 'Welcome to your page!',
+            content: 'Use the buttons below to add some cards.',
+            imageUrl: '',
+            fullSizedImage: false
+          }
+        ]
+      })
     }
-    const { data } = await supabase
-      .from('websites')
-      .select('page_slug')
-      .eq('user_id', user?.id)
-      .single()
+
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
