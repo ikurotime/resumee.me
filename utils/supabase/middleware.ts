@@ -38,7 +38,6 @@ export async function updateSession(request: NextRequest) {
   const {
     data: { user }
   } = await supabase.auth.getUser()
-
   if (
     (user && request.nextUrl.pathname.startsWith('/login')) ||
     (user && request.nextUrl.pathname.startsWith('/signup')) ||
@@ -50,10 +49,12 @@ export async function updateSession(request: NextRequest) {
       .eq('user_id', user.id)
       .select()
       .single()
+    console.log(data)
+    const newWebsite = v4()
     if (user && !data?.page_slug) {
       createWebsite({
         user_id: user.id,
-        page_slug: v4(),
+        page_slug: newWebsite,
         blocks: [
           {
             i: v4(),
@@ -87,8 +88,9 @@ export async function updateSession(request: NextRequest) {
       })
     }
     // no user, potentially respond by redirecting the user to the login page
+
     const url = request.nextUrl.clone()
-    url.pathname = `/${data?.page_slug || ''}` || '/error'
+    url.pathname = `/${data?.page_slug || newWebsite || ''}` || '/error'
     return NextResponse.redirect(url)
   }
 

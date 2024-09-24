@@ -62,41 +62,6 @@ export async function GET(request: Request) {
           }
         ]
       })
-    } else if (user && !data?.page_slug) {
-      createWebsite({
-        user_id: user.id,
-        page_slug: v4(),
-        blocks: [
-          {
-            i: v4(),
-            x: 0,
-            y: 0,
-            w: 1,
-            h: 1,
-            isResizable: false,
-            url: '',
-            type: 'profile',
-            imageUrl: '',
-            content: '',
-            title: '',
-            fullSizedImage: false
-          },
-          {
-            i: v4(),
-            x: 2,
-            y: 0,
-            w: 2,
-            h: 1,
-            isResizable: false,
-            url: '',
-            type: 'info',
-            title: 'Welcome to your page!',
-            content: 'Use the buttons below to add some cards.',
-            imageUrl: '',
-            fullSizedImage: false
-          }
-        ]
-      })
     }
 
     if (!error) {
