@@ -31,7 +31,7 @@ export default function ClaimLinkPage() {
       options: {
         redirectTo: isLocalEnv
           ? `http://localhost:3000/auth/callback?claim=${formState.inputValue}`
-          : 'https://resumee.me/auth/callback'
+          : `https://resumee.me/auth/callback?claim=${formState.inputValue}`
       }
     })
   }
