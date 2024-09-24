@@ -22,8 +22,14 @@ export default function LoginPage() {
   }
   const supabase = createClient()
   const handleLoginWithGoogle = () => {
+    const isLocalEnv = process.env.NODE_ENV === 'development'
     supabase.auth.signInWithOAuth({
-      provider: 'google'
+      provider: 'google',
+      options: {
+        redirectTo: isLocalEnv
+          ? `http://localhost:3000/auth/callback`
+          : `https://resumee.me/auth/callback`
+      }
     })
   }
 
