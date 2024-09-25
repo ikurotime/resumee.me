@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Resumee.me
+
+Resumee.me is a modern, interactive platform for creating and sharing professional profiles. It allows users to showcase their skills, projects, and career journey through a customizable, single-page resume website.
+
+## Features
+
+- **Unique Profile Links**: Users can claim a personalized URL (e.g., resumee.me/your-name).
+- **Interactive CV Builder**: Drag-and-drop interface for creating and customizing resume sections.
+- **Dynamic Blocks**: Various block types including projects, technologies, social integrations, and custom text.
+- **Social Media Integration (URLs)**: Connect and display content from various social platforms.
+- **Real-time Updates**: Changes are saved and reflected instantly.
+- **User Authentication**: Secure sign-up and login process, including Google OAuth.
+- **Profile Sharing**: Easy sharing options, including direct Twitter integration.
+
+## Technologies Used
+
+- **Frontend**:
+  - Next.js 14 (React framework)
+  - TypeScript
+  - Tailwind CSS for styling
+  - Framer Motion for animations
+  - Radix UI for accessible component primitives
+
+- **Backend**:
+  - Supabase for database and authentication
+  - Next.js API routes for serverless functions
+
+- **State Management**:
+  - React Context API
+
+- **Other Libraries**:
+  - react-grid-layout for drag-and-drop functionality
+  - react-color for color picking
+  - Lucide React for icons
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Set up environment variables (see `.env.example`)
+4. Run the development server:
+   ```
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `app/`: Next.js app directory containing pages and layouts
+- `components/`: Reusable React components
+- `contexts/`: React context providers
+- `actions/`: Server-side actions and API routes
+- `utils/`: Utility functions and helpers
+- `types.ts`: TypeScript type definitions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Roadmap
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Enhanced Customization**
+   - [ ] More block types (e.g., skills chart, timeline)
+   - [ ] Custom themes and color schemes
+   - [ ] Font customization
 
-## Learn More
+2. **Improved Social Integration**
+   - [ ] Automatic content import from linked platforms
+   - [ ] Analytics for profile views and interactions
 
-To learn more about Next.js, take a look at the following resources:
+3. **SEO Optimization**
+   - [ ] Custom meta tags for each profile
+   - [ ] Sitemap generation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Advanced Features**
+   - [ ] Multiple page support
+   - [ ] PDF export of resume
+   - [ ] Custom domain mapping
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Performance Enhancements**
+   - [ ] Image optimization
+   - [ ] Lazy loading of components
 
-## Deploy on Vercel
+6. **Collaboration Features**
+   - [ ] Sharing profiles with specific permissions
+   - [ ] Team/company profiles
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+7. **Monetization**
+   - [ ] Premium features for paid users
+   - [ ] Custom branding options for businesses
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+8. **Localization**
+   - [ ] Multi-language support
+   - [ ] Region-specific resume formats
+
+9. **Mobile App**
+   - [ ] Develop companion mobile app for on-the-go editing
+
+10. **AI Integration**
+    - [ ] AI-powered resume suggestions
+    - [ ] Automated content generation based on user input
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for more details.
