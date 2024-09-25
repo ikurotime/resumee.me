@@ -3,8 +3,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 import { User } from '@/types'
+import { createClient } from '@/utils/supabase/client'
 import { createWebsite } from '@/actions/websites'
-import { supabase } from '@/lib/supabase-client'
 import { v4 } from 'uuid'
 
 type AuthContextType = {
@@ -18,7 +18,7 @@ type AuthContextType = {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
+const supabase = createClient()
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children
 }) => {

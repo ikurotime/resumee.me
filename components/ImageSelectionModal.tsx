@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { useEffect, useState } from 'react'
 
 import { Button } from './ui/button'
-import { supabase } from '@/lib/supabase-client'
+import { createClient } from '@/utils/supabase/client'
 
 interface ImageSelectionModalProps {
   isOpen: boolean
@@ -18,7 +18,7 @@ export function ImageSelectionModal({
   onSelect
 }: ImageSelectionModalProps) {
   const [images, setImages] = useState<string[]>([])
-
+  const supabase = createClient()
   useEffect(() => {
     async function fetchImages() {
       const userId = (await supabase.auth.getSession()).data.session?.user.id
