@@ -31,7 +31,14 @@ export function FloatingBottomBar({ user }: FloatingBottomBarProps) {
   const [isShareModalOpen, setShareModalOpen] = useState(false) // Add state for modal
 
   const handleShare = () => {
-    setShareModalOpen(!isShareModalOpen) // Open the modal
+    const tweetContent = `Just made my new page. I can't wait to customize it! I'm going to have a cool link-in-bio ${
+      'resumee.me/' + website?.page_slug
+    }`
+
+    const tweetUrl = `https://x.com/intent/post?text=${encodeURIComponent(
+      tweetContent
+    )}`
+    window.open(tweetUrl, '_blank')
   }
   const { isSaving, website, saveWebsite } = useSite()
   const [showLinkInput, setShowLinkInput] = useState(false)
