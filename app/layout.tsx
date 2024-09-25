@@ -17,8 +17,9 @@ const geistMono = localFont({
 })
 
 export const metadata: Metadata = {
-  title: 'Resumee.me',
-  description: 'The platform for creating your own resume website'
+  title: 'Resumee - Your Career, One Link Away',
+  description:
+    'Create a stunning resume website and showcase your professional journey with a single link'
 }
 
 export default function RootLayout({
