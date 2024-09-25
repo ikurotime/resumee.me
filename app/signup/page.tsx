@@ -45,6 +45,14 @@ export default function ClaimLinkPage() {
       updateFormState({ isAvailable: false, errorMessage: '' })
       return
     }
+    const regex = /^[a-z0-9-]{1,20}$/
+    if (!regex.test(pageName)){
+        updateFormState({
+            isAvailable: false,
+            errorMessage: 'Name can\'t have symbols and must be between 1 and 20 characters.'
+        })
+        return
+    }
 
     const result = await checkWebsiteExists(pageName)
     updateFormState({
@@ -156,7 +164,7 @@ export default function ClaimLinkPage() {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className='text-red-500 text-sm mt-1'
+                      className='text-red-500 text-sm mb-1'
                     >
                       {formState.errorMessage}
                     </motion.p>

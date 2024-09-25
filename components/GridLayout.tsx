@@ -148,8 +148,8 @@ function GridLayout({ user, isOwnProfile }: GridLayoutProps) {
             <div className='absolute z-[9999] -top-3 -right-3 opacity-0 group-hover:opacity-100 transition-opacity'>
               <DeleteButton id={block.i} />
             </div>
-            <div className='absolute draggable_handle z-[9999] -top-5 -left-5 opacity-0 size-12 items-center flex justify-center   group-hover:opacity-100 transition-opacity'>
-              <div className='bg-white rounded-full size-8 justify-center flex items-center border'>
+            <div className='absolute draggable_handle z-[9999] -top-5 opacity-0 size-12 items-center flex justify-center   group-hover:opacity-100 transition-opacity'>
+              <div className='bg-white rounded-2xl size-8 z-[9999] relative justify-center flex items-center border'>
                 <Grip id={block.i} size={16} />
               </div>
             </div>
