@@ -22,7 +22,8 @@ export async function GET(request: Request) {
       .select('page_slug')
       .eq('user_id', user?.id)
       .single()
-    if (user && site) {
+    const newSite = v4()
+    if (user) {
       const { data } = await supabase
         .from('users')
         .select('*')
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
         .single()
       createWebsite({
         user_id: user.id,
-        page_slug: site,
+        page_slug: site ?? newSite,
         blocks: [
           {
             i: v4(),
@@ -64,18 +65,23 @@ export async function GET(request: Request) {
       })
     }
 
+    console.log(site ?? data?.page_slug)
     if (!error) {
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
       if (isLocalEnv) {
         // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}/${site ?? data?.page_slug}`)
+        return NextResponse.redirect(
+          `${origin}/${site ?? data?.page_slug ?? newSite}`
+        )
       } else if (forwardedHost) {
         return NextResponse.redirect(
-          `https://${forwardedHost}/${site ?? data?.page_slug}`
+          `https://${forwardedHost}/${site ?? data?.page_slug ?? newSite}`
         )
       } else {
-        return NextResponse.redirect(`${origin}/${site ?? data?.page_slug}`)
+        return NextResponse.redirect(
+          `${origin}/${site ?? data?.page_slug ?? newSite}`
+        )
       }
     }
   }
