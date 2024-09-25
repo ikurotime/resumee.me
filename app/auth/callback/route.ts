@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       .eq('user_id', user?.id)
       .single()
     const newSite = v4()
-    if (user) {
+    if (user && !data?.page_slug) {
       const { data } = await supabase
         .from('users')
         .select('*')
