@@ -74,7 +74,7 @@ export default function Component() {
         initial='hidden'
         animate={controls}
         variants={containerVariants}
-        className='py-20'
+        className='py-20 flex h-auto'
       >
         {children}
       </motion.section>
@@ -133,20 +133,20 @@ export default function Component() {
                 </Link>
               </motion.div>
             </motion.div>
-            <motion.div className='mt-16' animate={floatingAnimation}>
-              <Card className='w-full max-w-4xl mx-auto overflow-hidden shadow-lg'>
-                <CardContent className='p-0'>
-                  <div className='bg-gradient-to-r from-blue-100 to-green-100 p-8 rounded-t-lg'>
-                    <video
-                      width='1200'
-                      height='720'
-                      src='/recording.mp4'
-                      loop
-                      muted
-                      autoPlay
-                    />
-                  </div>
-                </CardContent>
+            <motion.div
+              className='mt-16 flex w-full '
+              animate={floatingAnimation}
+            >
+              <Card className=' flex  mx-auto overflow-hidden shadow-lg  aspect-video'>
+                <div className='bg-gradient-to-r from-blue-100 to-green-100 p-8 rounded-t-lg aspect-video  '>
+                  <video
+                    className='aspect-video'
+                    src='/recording.mp4'
+                    loop
+                    muted
+                    autoPlay
+                  />
+                </div>
               </Card>
             </motion.div>
           </div>
@@ -189,9 +189,9 @@ export default function Component() {
           </div>
         </AnimatedSection>
       </main>
-      <footer className='bg-white text-gray-600 py-12 px-4 sm:px-6 lg:px-8 mt-20'>
-        <div className='container mx-auto'>
-          <div className='mt-8 pt-8 border-t border-gray-200 text-center'>
+      <footer className='flex w-full border-t bg-white text-gray-600  sm:px-6 lg:px-8 mt-20'>
+        <div className=' mx-auto'>
+          <div className='mt-8 pt-8 border-gray-200 text-center'>
             <p>&copy; {new Date().getFullYear()} Resumee.me.</p>
           </div>
         </div>
