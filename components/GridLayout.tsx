@@ -307,6 +307,7 @@ const SOCIAL_CARD_STYLES = {
     hexColor: '#DB2777'
   },
   twitter: { bgColor: 'bg-blue-400', title: 'Twitter', hexColor: '#60A5FA' },
+  x: { bgColor: 'bg-zinc-900', title: 'X', hexColor: '#18181B' },
   linkedin: { bgColor: 'bg-blue-700', title: 'LinkedIn', hexColor: '#1D4ED8' },
   facebook: { bgColor: 'bg-blue-600', title: 'Facebook', hexColor: '#2563EB' },
   pinterest: { bgColor: 'bg-red-700', title: 'Pinterest', hexColor: '#B91C1C' },
