@@ -1,5 +1,5 @@
 import { Block } from '@/types'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/server'
 import { createWebsite } from '@/actions/websites'
 import { v4 } from 'uuid'
 
