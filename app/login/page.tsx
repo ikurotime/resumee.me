@@ -35,7 +35,7 @@ export default function LoginPage() {
 
   return (
     <div className='flex min-h-screen bg-white'>
-      <div className='w-1/2 flex items-center justify-center p-12'>
+      <div className=' w-full md:w-1/2 flex items-center justify-center p-12'>
         <div className='w-full max-w-md'>
           <h1 className='text-3xl font-bold mb-6 text-black'>
             Log in to your account
@@ -87,7 +87,7 @@ export default function LoginPage() {
           </Link>
         </div>
       </div>
-      <div className='w-1/2 bg-gray-100'>
+      <div className='hidden md:flex w-1/2 bg-gray-100'>
         <video
           width='1200'
           height='720'

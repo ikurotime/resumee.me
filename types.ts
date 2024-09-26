@@ -2,17 +2,29 @@
 // Common type for UUID
 type UUID = string
 
+export interface FormState {
+  inputValue: string
+  showNextStep: boolean
+  showPassword: boolean
+  email: string
+  password: string
+  errorMessage: string
+  isAvailable: boolean
+}
+
 export interface BlockProps {
   block: Block
   user: User
   isOwnProfile: boolean
 }
+
 export interface GridLayoutProps {
   user: User
   isOwnProfile: boolean
 }
+
 // User related types
-interface User {
+export interface User {
   id: UUID
   email?: string | undefined
   name?: string
@@ -23,7 +35,7 @@ interface User {
 }
 
 // Website theme related types
-interface WebsiteTheme {
+export interface WebsiteTheme {
   id: UUID
   name: string
   description?: string
@@ -31,7 +43,7 @@ interface WebsiteTheme {
 }
 
 // Website related types
-interface Website {
+export interface Website {
   id?: UUID
   user_id: UUID
   theme_id?: UUID
@@ -50,7 +62,7 @@ interface Website {
 }
 
 // Block related types
-interface Block {
+export interface Block {
   i: string
   x: number
   y: number
@@ -66,7 +78,7 @@ interface Block {
 }
 
 // Technology related types
-interface Technology {
+export interface Technology {
   id: UUID
   name: string
   category?: string
@@ -74,13 +86,13 @@ interface Technology {
 }
 
 // Proficiency level related types
-interface ProficiencyLevel {
+export interface ProficiencyLevel {
   id: UUID
   name: string
 }
 
 // User technology related types
-interface UserTechnology {
+export interface UserTechnology {
   id: UUID
   website_id: UUID
   technology_id: UUID
@@ -89,13 +101,13 @@ interface UserTechnology {
 }
 
 // Project type related types
-interface ProjectType {
+export interface ProjectType {
   id: UUID
   name: string
 }
 
 // Project related types
-interface Project {
+export interface Project {
   id: UUID
   name: string
   description?: string
@@ -107,13 +119,13 @@ interface Project {
 }
 
 // Role related types
-interface Role {
+export interface Role {
   id: UUID
   name: string
 }
 
 // User project related types
-interface UserProject {
+export interface UserProject {
   id: UUID
   website_id: UUID
   project_id: UUID
@@ -121,13 +133,13 @@ interface UserProject {
 }
 
 // Social network related types
-interface SocialNetwork {
+export interface SocialNetwork {
   id: UUID
   name: string
 }
 
 // Social network integration related types
-interface SocialNetworkIntegration {
+export interface SocialNetworkIntegration {
   id: UUID
   website_id: UUID
   network_id: UUID
@@ -140,29 +152,10 @@ interface SocialNetworkIntegration {
 }
 
 // Enum for predefined block types
-enum PredefinedBlockType {
+export enum PredefinedBlockType {
   Project = 'Project',
   Technology = 'Technology',
   SocialIntegration = 'SocialIntegration',
   ProfileInfo = 'ProfileInfo',
   CustomText = 'CustomText'
 }
-
-export type {
-  UUID,
-  User,
-  WebsiteTheme,
-  Website,
-  Block,
-  Technology,
-  ProficiencyLevel,
-  UserTechnology,
-  ProjectType,
-  Project,
-  Role,
-  UserProject,
-  SocialNetwork,
-  SocialNetworkIntegration
-}
-
-export { PredefinedBlockType }

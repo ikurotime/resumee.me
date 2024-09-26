@@ -29,7 +29,7 @@ Resumee.me is a modern, interactive platform for creating and sharing profession
   - React Context API
 
 - **Other Libraries**:
-  - react-grid-layout for drag-and-drop functionality
+  - react-grid-layout for drag-and-drop functionality 
   - react-color for color picking
   - Lucide React for icons
 

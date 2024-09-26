@@ -1,60 +1,82 @@
-export const keys = [
-  'a',
-  'b',
-  'c',
-  'd',
-  'e',
-  'o',
-  'f',
-  'g',
-  'h',
-  'i',
-  'j',
-  'k',
-  'l',
-  'm',
-  'n',
-  'p',
-  'q'
-]
+export const SOCIAL_CARD_STYLES = {
+  youtube: { bgColor: 'bg-red-600', title: 'YouTube', hexColor: '#DC2626' },
+  twitch: { bgColor: 'bg-purple-600', title: 'Twitch', hexColor: '#9333EA' },
+  github: { bgColor: 'bg-gray-800', title: 'GitHub', hexColor: '#1F2937' },
+  tiktok: { bgColor: 'bg-black', title: 'TikTok', hexColor: '#000000' },
+  instagram: {
+    bgColor: 'bg-pink-600',
+    title: 'Instagram',
+    hexColor: '#DB2777'
+  },
+  twitter: { bgColor: 'bg-blue-400', title: 'Twitter', hexColor: '#60A5FA' },
+  x: { bgColor: 'bg-zinc-900', title: 'X', hexColor: '#18181B' },
+  linkedin: { bgColor: 'bg-blue-700', title: 'LinkedIn', hexColor: '#1D4ED8' },
+  facebook: { bgColor: 'bg-blue-600', title: 'Facebook', hexColor: '#2563EB' },
+  pinterest: { bgColor: 'bg-red-700', title: 'Pinterest', hexColor: '#B91C1C' },
+  snapchat: {
+    bgColor: 'bg-yellow-400',
+    title: 'Snapchat',
+    hexColor: '#FBBF24'
+  },
+  reddit: { bgColor: 'bg-orange-600', title: 'Reddit', hexColor: '#EA580C' },
+  tumblr: { bgColor: 'bg-blue-800', title: 'Tumblr', hexColor: '#1E40AF' },
+  whatsapp: { bgColor: 'bg-green-500', title: 'WhatsApp', hexColor: '#22C55E' },
+  telegram: { bgColor: 'bg-blue-500', title: 'Telegram', hexColor: '#3B82F6' },
+  medium: { bgColor: 'bg-black', title: 'Medium', hexColor: '#000000' },
+  spotify: { bgColor: 'bg-green-600', title: 'Spotify', hexColor: '#16A34A' },
+  soundcloud: {
+    bgColor: 'bg-orange-500',
+    title: 'SoundCloud',
+    hexColor: '#F97316'
+  },
+  behance: { bgColor: 'bg-blue-600', title: 'Behance', hexColor: '#2563EB' },
+  dribbble: { bgColor: 'bg-pink-500', title: 'Dribbble', hexColor: '#EC4899' },
+  vimeo: { bgColor: 'bg-blue-700', title: 'Vimeo', hexColor: '#1D4ED8' },
+  flickr: { bgColor: 'bg-pink-400', title: 'Flickr', hexColor: '#F472B6' },
+  deviantart: {
+    bgColor: 'bg-green-800',
+    title: 'DeviantArt',
+    hexColor: '#166534'
+  },
+  etsy: { bgColor: 'bg-orange-600', title: 'Etsy', hexColor: '#EA580C' },
+  patreon: { bgColor: 'bg-red-500', title: 'Patreon', hexColor: '#EF4444' },
+  discord: { bgColor: 'bg-indigo-600', title: 'Discord', hexColor: '#4F46E5' }
+}
 
-// export const HomeLayouts = {
-//   lg: [
-//     { i: 'a', x: 0, y: 0, w: 2, h: 2, isResizable: false },
-//     { i: 'b', x: 2, y: 0, w: 1, h: 1, isResizable: false },
-//     { i: 'c', x: 0, y: 4, w: 1, h: 1, isResizable: false },
-//     { i: 'd', x: 0, y: 2, w: 1, h: 1, isResizable: false },
-//     { i: 'e', x: 2, y: 7, w: 1, h: 1, isResizable: false },
-//     { i: 'f', x: 2, y: 1, w: 1, h: 1, isResizable: false },
-//     { i: 'g', x: 0, y: 6, w: 1, h: 1, isResizable: false },
-//     { i: 'h', x: 1, y: 6, w: 2, h: 1, isResizable: false },
-//     { i: 'i', x: 2, y: 2, w: 2, h: 1, isResizable: false },
-//     { i: 'j', x: 2, y: 7, w: 1, h: 1, isResizable: false },
-//     { i: 'k', x: 0, y: 7, w: 2, h: 1, static: true },
-//     { i: 'l', x: 0, y: 3, w: 1, h: 1, isResizable: false },
-//     { i: 'm', x: 1, y: 2, w: 2, h: 2, isResizable: false },
-//     { i: 'n', x: 0, y: 7, w: 1, h: 1, isResizable: false },
-//     { i: 'o', x: 1, y: 7, w: 1, h: 1, isResizable: false },
-//     { i: 'p', x: 2, y: 4, w: 1, h: 1, isResizable: false },
-//     { i: 'q', x: 0, y: 4, w: 2, h: 1, isResizable: false }
-//   ],
-//   xs: [
-//     { i: 'a', x: 0, y: 0, w: 2, h: 1, static: true },
-//     { i: 'b', x: 0, y: 1, w: 1, h: 1, static: true },
-//     { i: 'c', x: 0, y: 7, w: 1, h: 1, static: true },
-//     { i: 'd', x: 0, y: 3, w: 1, h: 1, static: true },
-//     { i: 'e', x: 1, y: 4, w: 1, h: 1, static: true },
-//     { i: 'f', x: 0, y: 2, w: 1, h: 1, static: true },
-//     { i: 'g', x: 1, y: 12, w: 2, h: 1, static: true },
-//     { i: 'h', x: 0, y: 9, w: 2, h: 1, static: true },
-//     { i: 'i', x: 0, y: 5, w: 1, h: 1, static: true },
-//     { i: 'j', x: 2, y: 13, w: 1.5, h: 1, static: true },
-//     { i: 'k', x: 2, y: 14, w: 3, h: 1, static: true },
-//     { i: 'l', x: 0, y: 8, w: 1, h: 1, static: true },
-//     { i: 'm', x: 0, y: 6, w: 1, h: 1, static: true },
-//     { i: 'n', x: 0, y: 11, w: 1, h: 1, static: true },
-//     { i: 'o', x: 0, y: 10, w: 1, h: 1, static: true },
-//     { i: 'p', x: 0, y: 10, w: 1, h: 1, static: true },
-//     { i: 'q', x: 0, y: 9, w: 1, h: 1, static: true }
-//   ]
-// }
+export function handleCardSelect(draggedElement: HTMLElement) {
+  const selectedCard = draggedElement.querySelector('.colored')
+  const backgroundColor = selectedCard
+    ? window.getComputedStyle(selectedCard).backgroundColor
+    : 'rgba(0, 0, 0, 0.138)'
+
+  const rgbaColor = backgroundColor.replace(
+    /rgba?\((\d+), (\d+), (\d+)(?:, (\d+\.?\d*))?\)/,
+    (match, r, g, b) => `rgba(${r}, ${g}, ${b}, 0.138)`
+  )
+
+  document.documentElement.style.setProperty(
+    '--selected-card-background',
+    rgbaColor
+  )
+}
+
+export const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 }
+  }
+}
+
+export const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 100,
+      damping: 15
+    }
+  }
+}
