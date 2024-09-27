@@ -1,16 +1,12 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
 import { motion, useAnimation, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
 import Link from 'next/link'
-import { addInterestedEmail } from '@/actions/websites'
 import { createClient } from '@/utils/supabase/client'
-import { redirect } from 'next/navigation'
 
 export default function Component() {
   const containerVariants = {
