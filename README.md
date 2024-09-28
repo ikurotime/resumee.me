@@ -29,7 +29,7 @@ Resumee.me is a modern, interactive platform for creating and sharing profession
   - React Context API
 
 - **Other Libraries**:
-  - react-grid-layout for drag-and-drop functionality
+  - react-grid-layout for drag-and-drop functionality 
   - react-color for color picking
   - Lucide React for icons
 
@@ -62,6 +62,7 @@ Resumee.me is a modern, interactive platform for creating and sharing profession
    - [ ] More block types (e.g., skills chart, timeline)
    - [ ] Custom themes and color schemes
    - [ ] Font customization
+   - [ ] Custom domain
 
 2. **Improved Social Integration**
    - [ ] Automatic content import from linked platforms
@@ -92,10 +93,7 @@ Resumee.me is a modern, interactive platform for creating and sharing profession
    - [ ] Multi-language support
    - [ ] Region-specific resume formats
 
-9. **Mobile App**
-   - [ ] Develop companion mobile app for on-the-go editing
-
-10. **AI Integration**
+9. **AI Integration**
     - [ ] AI-powered resume suggestions
     - [ ] Automated content generation based on user input
 

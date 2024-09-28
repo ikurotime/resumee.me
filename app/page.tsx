@@ -1,16 +1,12 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Card, CardContent } from '@/components/ui/card'
 import { motion, useAnimation, useInView } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
 import Link from 'next/link'
-import { addInterestedEmail } from '@/actions/websites'
 import { createClient } from '@/utils/supabase/client'
-import { redirect } from 'next/navigation'
 
 export default function Component() {
   const containerVariants = {
@@ -52,7 +48,7 @@ export default function Component() {
         .from('users')
         .select('profile_picture')
         .not('profile_picture', 'is', null)
-        .limit(20)
+        .limit(30)
 
       if (error) {
         console.error('Error fetching user pictures:', error)
@@ -65,11 +61,7 @@ export default function Component() {
 
     fetchUserPictures()
   }, [])
-  const handleEmailClick = (formData: FormData) => {
-    const email = formData.get('email') as string
-    addInterestedEmail(email)
-    redirect('/thank-you')
-  }
+
   function AnimatedSection({
     children,
     id
@@ -96,7 +88,7 @@ export default function Component() {
         initial='hidden'
         animate={controls}
         variants={containerVariants}
-        className='py-20 flex h-auto'
+        className='flex  h-auto'
       >
         {children}
       </motion.section>
@@ -104,12 +96,12 @@ export default function Component() {
   }
 
   return (
-    <div className='min-h-screen bg-white relative'>
+    <div className=' bg-white relative'>
       {/* Render confetti when true */}
       <main className='space-y-20'>
         <AnimatedSection id='hero'>
-          <div className='container mx-auto'>
-            <motion.div className='text-center gap-4 flex flex-col items-center  min-h-[75vh] justify-center'>
+          <div className='container   mx-auto'>
+            <motion.div className='text-center gap-4 flex flex-col items-center  min-h-[88vh] justify-center'>
               <motion.img
                 src='/icon.png'
                 className='mx-auto'
@@ -170,6 +162,24 @@ export default function Component() {
             </motion.div>
           </div>
         </AnimatedSection>
+        <AnimatedSection id='cta-features'>
+          <div className='container mx-auto max-w-6xl py-20'>
+            <motion.div
+              variants={itemVariants}
+              className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'
+            >
+              <div className='space-y-8'>
+                <FeatureItem>Your Career</FeatureItem>
+                <FeatureItem>Showcase Projects</FeatureItem>
+              </div>
+              <div className='space-y-8'>
+                <FeatureItem>Share Achievements</FeatureItem>
+                <FeatureItem>Connect Globally</FeatureItem>
+              </div>
+            </motion.div>
+          </div>
+        </AnimatedSection>
+
         <AnimatedSection id='users'>
           <div className='container mx-auto max-w-6xl'>
             <motion.div variants={itemVariants} className='text-center mb-12'>
@@ -198,75 +208,27 @@ export default function Component() {
                   <AvatarFallback>{`U${index + 1}`}</AvatarFallback>
                 </Avatar>
               ))}
-              <Link
-                href='/signup'
-                className='bg-black mt-20 hover:bg-gray-800 text-white text-xl font-bold h-14 rounded-md px-12 items-center flex'
-              >
-                Create Your Resumee
-              </Link>
             </motion.div>
-          </div>
-        </AnimatedSection>
-
-        <AnimatedSection id='cta-features'>
-          <div className='container mx-auto max-w-6xl py-20'>
-            <motion.div
-              variants={itemVariants}
-              className='grid grid-cols-1 md:grid-cols-2 gap-8 items-center'
+            <Link
+              href='/signup'
+              className='bg-black mt-20 hover:bg-gray-800 max-w-xs text-center justify-center m-auto text-white text-xl font-bold h-14 rounded-md px-12 items-center flex'
             >
-              <div className='space-y-8'>
-                <FeatureItem>Your Career</FeatureItem>
-                <FeatureItem>Showcase Projects</FeatureItem>
-              </div>
-              <div className='space-y-8'>
-                <FeatureItem>Share Achievements</FeatureItem>
-                <FeatureItem>Connect Globally</FeatureItem>
-              </div>
-            </motion.div>
-          </div>
-        </AnimatedSection>
-
-        <AnimatedSection id='cta'>
-          <div className='container mx-auto max-w-2xl'>
-            <motion.div className='text-center'>
-              <motion.h2
-                variants={itemVariants}
-                className='text-3xl font-bold mb-6 text-gray-900'
-              >
-                Ready to Showcase Your Tech Journey?
-              </motion.h2>
-              <motion.p
-                variants={itemVariants}
-                className='text-xl mb-8 text-gray-600'
-              >
-                Let me know if you are interested in this project.
-              </motion.p>
-              <motion.div variants={itemVariants}>
-                <Card>
-                  <CardContent className='p-6'>
-                    <form action={handleEmailClick} className='space-y-4'>
-                      <Input
-                        type='email'
-                        name='email'
-                        placeholder='Enter your email'
-                        //value={email}
-                        //  onChange={(e) => setEmail(e.target.value)}
-                      />
-                      <Button className='w-full bg-black hover:bg-gray-800 text-white'>
-                        Get Early Access
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </motion.div>
+              Create Your Resumee
+            </Link>
           </div>
         </AnimatedSection>
       </main>
-      <footer className='flex w-full border-t min-h-screen bg-white text-gray-600  sm:px-6 lg:px-8 mt-20'>
-        <div className=' mx-auto'>
-          <div className='mt-8 pt-8 border-gray-200 text-center'>
+      <footer className='flex flex-col  w-full min-h-[80vh] bg-white text-gray-600  sm:px-6 lg:px-8 '>
+        <div className='m-auto'>
+          <div className='flex flex-col justify-center items-center gap-4 m-auto pt-8 border-gray-200 text-center'>
+            <img src='/icon.png' className='size-14' alt='' />
             <p> made by Kuro. for everyone.</p>
+          </div>
+          <div className='flex gap-4 m-auto pt-8 border-gray-200 text-center'>
+            <Link href={'/login'}>login</Link>
+            <Link href={'/about-us'}>about us</Link>
+            <Link href={'/explore'}>explore</Link>
+            <Link href={'/changelog'}>changelog</Link>
           </div>
         </div>
       </footer>
